@@ -1,0 +1,26 @@
+# Deployment for svc-b
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: svc-b-deployment
+  namespace: mesh-exp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: svc-b
+  template:
+    metadata:
+      labels:
+        app: svc-b
+    spec:
+      nodeSelector:
+        exp: mesh
+      containers:
+      - name: app
+        image: hashicorp/http-echo
+        args:
+        - "-text=heavy"
+        ports:
+        - containerPort: 5678

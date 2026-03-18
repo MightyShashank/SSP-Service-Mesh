@@ -1,0 +1,24 @@
+# This simulates the below client:
+
+# kubectl run client -n mesh-exp --image=curlimages/curl -it --rm -- sh
+# apk add wrk
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: client
+  namespace: mesh-exp
+  labels:
+    app: client
+spec:
+  nodeSelector:
+    exp: mesh
+  containers:
+  - name: client
+    image: alpine:3.19
+    command: ["/bin/sh", "-c"]
+    args:
+      - |
+        apk add --no-cache curl wrk;
+        echo "wrk installed, client ready";
+        sleep infinity;

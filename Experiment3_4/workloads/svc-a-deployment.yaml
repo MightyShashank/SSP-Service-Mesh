@@ -1,0 +1,24 @@
+# Deployment for service A
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: svc-a-deployment   # changed
+  namespace: mesh-exp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: svc-a   # SAME
+  template:
+    metadata:
+      labels:
+        app: svc-a   # SAME
+    spec:
+      nodeSelector:
+        exp: mesh
+      containers:
+      - name: app
+        image: nginxdemos/hello
+        ports:
+        - containerPort: 80
