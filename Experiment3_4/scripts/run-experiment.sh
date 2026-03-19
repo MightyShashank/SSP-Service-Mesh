@@ -1,5 +1,4 @@
 # This is a full pipeline automation
-
 #!/bin/bash
 
 set -euo pipefail
@@ -9,11 +8,10 @@ set -euo pipefail
 # ==============================
 NAMESPACE="mesh-exp"
 
-TRAFFIC_DIR="../traffic"
-OBS_DIR="../observability"
 RESULTS_DIR="../results/raw"
-
 RUN_ID=$(date +"%Y%m%d_%H%M%S")
+
+TRAFFIC_DIR="../traffic"
 
 # Create structured output dirs
 BASELINE_DIR="$RESULTS_DIR/$RUN_ID/baseline"
@@ -22,6 +20,8 @@ LOAD_RAMP_DIR="$RESULTS_DIR/$RUN_ID/load-ramp"
 SYSTEM_DIR="$RESULTS_DIR/$RUN_ID/system"
 
 mkdir -p "$BASELINE_DIR" "$INTERFERENCE_DIR" "$LOAD_RAMP_DIR" "$SYSTEM_DIR"
+
+export RUN_ID
 
 # ==============================
 # LOGGING
@@ -43,17 +43,21 @@ log "Checking client pod availability..."
 kubectl get pod client -n "$NAMESPACE" > /dev/null \
   || fail "Client pod not found. Run deploy script first."
 
-log "Verifying wrk availability inside client..."
+log "Verifying Fortio availability..."
 
-if kubectl exec -n "$NAMESPACE" client -- sh -c "which wrk" > /dev/null 2>&1; then
-  echo "✔ wrk binary found inside client pod"
-else
-  fail "wrk not available inside client pod"
-fi
+kubectl exec -n "$NAMESPACE" client -- fortio version > /dev/null 2>&1 \
+  || fail "Fortio not available inside client pod"
 
-echo "✔ wrk is available inside client pod"
+echo "✔ Client + Fortio ready"
 
-echo "✔ Client + wrk ready"
+# ==============================
+# STEP 0.5 — WARMUP
+# ==============================
+log "Running system warmup..."
+
+bash "$TRAFFIC_DIR/warmup.sh"
+
+echo "✔ Warmup completed"
 
 # ==============================
 # STEP 1 — BASELINE
@@ -61,32 +65,39 @@ echo "✔ Client + wrk ready"
 log "Running BASELINE experiment..."
 
 kubectl exec -n "$NAMESPACE" client -- \
-  wrk -t2 -c50 -d120s --latency http://svc-a.mesh-exp \
-  > "$BASELINE_DIR/baseline.txt"
+  fortio load -c 50 -qps 500 -t 120s -loglevel Error \
+  -json - \
+  http://svc-a.mesh-exp \
+  > "$BASELINE_DIR/baseline.json" \
+  || fail "Baseline run failed"
 
-echo "✔ Baseline completed → $BASELINE_DIR/baseline.txt"
+echo "✔ Baseline completed → $BASELINE_DIR/baseline.json"
 
 # ==============================
 # STEP 2 — INTERFERENCE
 # ==============================
 log "Running INTERFERENCE experiment..."
 
-# svc-a (latency-sensitive)
+# svc-a
 kubectl exec -n "$NAMESPACE" client -- \
-  wrk -t2 -c50 -d300s --latency http://svc-a.mesh-exp \
-  > "$INTERFERENCE_DIR/svc-a.txt" &
+  fortio load -c 50 -qps 500 -t 300s -loglevel Error \
+  -json - \
+  http://svc-a.mesh-exp \
+  > "$INTERFERENCE_DIR/svc-a.json" &
 
 PID_A=$!
 
-# svc-b (noisy workload)
+# svc-b
 kubectl exec -n "$NAMESPACE" client -- \
-  wrk -t8 -c400 -d300s --latency http://svc-b.mesh-exp \
-  > "$INTERFERENCE_DIR/svc-b.txt" &
+  fortio load -c 200 -qps 2000 -t 300s -loglevel Error \
+  -json - \
+  http://svc-b.mesh-exp \
+  > "$INTERFERENCE_DIR/svc-b.json" &
 
 PID_B=$!
 
-wait $PID_A
-wait $PID_B
+wait $PID_A || fail "svc-a interference failed"
+wait $PID_B || fail "svc-b interference failed"
 
 echo "✔ Interference completed → $INTERFERENCE_DIR"
 
@@ -95,30 +106,34 @@ echo "✔ Interference completed → $INTERFERENCE_DIR"
 # ==============================
 log "Running LOAD RAMP experiment..."
 
-loads=(100 300 600 1000)
+loads=(500 1000 2000 4000)
 
-for c in "${loads[@]}"
+for qps in "${loads[@]}"
 do
-  echo "[Load Ramp] Running load level: $c"
+  echo "[Load Ramp] svc-b at $qps QPS"
 
-  # svc-a (steady baseline)
+  # svc-a constant
   kubectl exec -n "$NAMESPACE" client -- \
-    wrk -t2 -c50 -d120s --latency http://svc-a.mesh-exp \
-    > "$LOAD_RAMP_DIR/svc-a_$c.txt" &
+    fortio load -c 50 -qps 500 -t 120s -loglevel Error \
+    -json - \
+    http://svc-a.mesh-exp \
+    > "$LOAD_RAMP_DIR/svc-a_$qps.json" &
 
   PID_A=$!
 
-  # svc-b (increasing load)
+  # svc-b ramp
   kubectl exec -n "$NAMESPACE" client -- \
-    wrk -t4 -c$c -d120s --latency http://svc-b.mesh-exp \
-    > "$LOAD_RAMP_DIR/svc-b_$c.txt" &
+    fortio load -c 200 -qps $qps -t 120s -loglevel Error \
+    -json - \
+    http://svc-b.mesh-exp \
+    > "$LOAD_RAMP_DIR/svc-b_$qps.json" &
 
   PID_B=$!
 
-  wait $PID_A
-  wait $PID_B
+  wait $PID_A || fail "svc-a failed at $qps"
+  wait $PID_B || fail "svc-b failed at $qps"
 
-  echo "✔ Completed load level: $c"
+  echo "✔ Completed load level: $qps"
 done
 
 echo "✔ Load ramp completed → $LOAD_RAMP_DIR"
@@ -145,4 +160,5 @@ echo "Baseline:      $BASELINE_DIR"
 echo "Interference:  $INTERFERENCE_DIR"
 echo "Load Ramp:     $LOAD_RAMP_DIR"
 echo "System Metrics:$SYSTEM_DIR"
+echo "Tool: Fortio (QPS-controlled)"
 echo "================================\n"

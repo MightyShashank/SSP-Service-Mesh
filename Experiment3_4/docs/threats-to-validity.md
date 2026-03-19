@@ -22,11 +22,12 @@ Mitigation:
 
 ## Measurement Bias
 
-- wrk measurements depend on client performance
+- Fortio measurements depend on client-side resource availability
 - Network stack variability may affect results
 
 Mitigation:
 - Client runs on same node
+- Fixed QPS (controlled load generation)
 - Multiple runs averaged
 
 ---
@@ -40,11 +41,12 @@ Mitigation:
 
 ## Tool Limitations
 
-- wrk does not capture full system behavior
-- Limited visibility into internal queueing
+- Fortio operates from a client perspective and does not capture full internal dataplane behavior
+- Limited direct visibility into internal queueing and scheduling inside ztunnel
+- Requires external observability (Prometheus/Grafana) for system-level insights
 
 ---
 
 ## Conclusion
 
-Despite limitations, setup provides a **controlled environment** to isolate dataplane contention effects.
+Despite limitations, the setup provides a **controlled, QPS-driven environment** to isolate dataplane contention effects and study tail latency behavior under multi-service load.

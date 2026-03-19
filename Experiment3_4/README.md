@@ -29,13 +29,17 @@ When multiple services share the same **ztunnel (node-level proxy)**, contention
   - Fully declarative YAML + scripts
   - No manual steps
 
+- **QPS-controlled load generation (Fortio)**
+  - Fixed request rate instead of best-effort load
+  - Enables clean **load vs latency analysis**
+
 ---
 
 ## Repository Structure
 
 - `cluster-setup/` → Infra assumptions (mesh enablement, node control)
 - `workloads/` → Kubernetes manifests (svc-a, svc-b, client)
-- `traffic/` → Load generation scripts (wrk-based)
+- `traffic/` → Load generation scripts (**Fortio-based**)
 - `scripts/` → One-click execution (deploy, cleanup, experiment run)
 - `observability/` → Metrics + Prometheus queries
 - `results/` → Raw + processed experiment outputs
@@ -56,7 +60,19 @@ This will:
     - svc-a (latency-sensitive).
     - svc-b (noisy workload).
     - client (traffic generator)
-- Ensure all pods run on same node are on the same ztunnel
+- Ensure all pods run on same node are on the same ztunnel. \\
+
+The Script automatically verifies: \\
+- Pod co-location (same node).
+- ztunnel presence.
+- Shared dataplane usage.
+
+
+## Pure Cleanup (No Deploy)
+```bash
+chmod +x cleanup.sh
+./cleanup.sh
+```
 
 ## Cleanup and deploy (idempotent)
 ```bash
@@ -64,8 +80,17 @@ chmod +x cleanup-deploy-setup.sh
 ./cleanup-deploy-setup.sh
 ```
 
-## Pure Cleanup (No Deploy)
+## Running the Experiments 
 ```bash
-chmod +x cleanup.sh
-./cleanup.sh
+chmod +x run-experiment.sh
+./run-experiment.sh
+```
+
+## After above experiment to collect results: Setup (Docker):
+```bash
+make build
+make run RUN_ID=<RUN_ID>
+
+# Then to clean do this:
+make clean
 ```

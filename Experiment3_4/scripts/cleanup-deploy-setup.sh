@@ -86,10 +86,10 @@ kubectl apply -f "$WORKLOADS_DIR/services.yaml"
 
 # ==============================
 # STEP 5 — DEPLOY CLIENT
-# Client runs wrk → generates traffic INSIDE cluster
+# Client runs Fortio → generates traffic INSIDE cluster
 # Ensures no external network noise
 # ==============================
-log "Deploying client..."
+log "Deploying Fortio client..."
 kubectl apply -f "$WORKLOADS_DIR/client.yaml"
 
 # ==============================
@@ -142,18 +142,16 @@ fi
 echo "✔ ztunnel on node $NODE_SVC_A → $ZTUNNEL_NODE"
 
 # ==============================
-# STEP 9 — VERIFY CLIENT TOOLING
-# Ensures wrk is available (traffic generation dependency)
+# STEP 9 — VERIFY CLIENT TOOLING (FORTIO)
+# Ensures Fortio is available inside client pod
 # ==============================
-log "Verifying wrk availability inside client..."
+log "Verifying Fortio availability inside client..."
 
-if kubectl exec -n "$NAMESPACE" client -- sh -c "which wrk" > /dev/null 2>&1; then
-  echo "✔ wrk binary found inside client pod"
+if kubectl exec -n "$NAMESPACE" client -- fortio version > /dev/null 2>&1; then
+  echo "✔ Fortio is available inside client pod"
 else
-  fail "wrk not available inside client pod"
+  fail "Fortio not available inside client pod"
 fi
-
-echo "✔ wrk is available inside client pod"
 
 # ==============================
 # FINAL SUMMARY
@@ -166,5 +164,6 @@ echo "Node: $NODE_NAME (labeled $NODE_LABEL_KEY=$NODE_LABEL_VALUE)"
 echo "Pods: svc-a, svc-b, client"
 echo "Placement: SAME NODE → $NODE_SVC_A"
 echo "Dataplane: ztunnel → $ZTUNNEL_NODE"
+echo "Client Tool: Fortio"
 echo "Status: READY FOR EXPERIMENTATION"
 echo "================================\n"

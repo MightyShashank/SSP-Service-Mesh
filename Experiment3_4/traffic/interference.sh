@@ -9,25 +9,25 @@
 # t = ~0s → svc-b starts immediately after
 # t = 0–300s → BOTH running concurrently
 
-
 #!/bin/bash
 
-OUT_DIR="../results/raw/interference"
-mkdir -p $OUT_DIR
+set -euo pipefail
 
 echo "[Interference] Starting..."
 
-# svc-a (latency-sensitive)
+# svc-a
 kubectl exec -n mesh-exp client -- \
-  wrk -t2 -c50 -d300s --latency http://svc-a.mesh-exp \
-  > $OUT_DIR/svc-a.txt &
+  fortio load -c 50 -qps 500 -t 300s -loglevel Error \
+  -json - \
+  http://svc-a.mesh-exp > ../results/raw/svc-a_tmp.json &
 
 PID_A=$!
 
-# svc-b (noisy)
+# svc-b
 kubectl exec -n mesh-exp client -- \
-  wrk -t8 -c400 -d300s --latency http://svc-b.mesh-exp \
-  > $OUT_DIR/svc-b.txt &
+  fortio load -c 200 -qps 2000 -t 300s -loglevel Error \
+  -json - \
+  http://svc-b.mesh-exp > ../results/raw/svc-b_tmp.json &
 
 PID_B=$!
 

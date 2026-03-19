@@ -1,7 +1,7 @@
 # This simulates the below client:
 
 # kubectl run client -n mesh-exp --image=curlimages/curl -it --rm -- sh
-# apk add wrk
+# apk add wrk <- I replaced it by fortio (a better load testing tool native to istio better than even wrk2)
 
 apiVersion: v1
 kind: Pod
@@ -13,12 +13,26 @@ metadata:
 spec:
   nodeSelector:
     exp: mesh
+
   containers:
   - name: client
-    image: alpine:3.19
-    command: ["/bin/sh", "-c"]
-    args:
-      - |
-        apk add --no-cache curl wrk;
-        echo "wrk installed, client ready";
-        sleep infinity;
+    image: fortio/fortio:latest
+
+    # Run Fortio server mode (keeps container alive)
+    args: ["server"]
+
+    # Mount writable directory for JSON outputs
+    volumeMounts:
+    - name: data
+      mountPath: /data
+
+    resources:
+      requests:
+        cpu: "200m"
+      limits:
+        cpu: "500m"
+
+  # Writable volume (FIXES /data issue)
+  volumes:
+  - name: data
+    emptyDir: {}

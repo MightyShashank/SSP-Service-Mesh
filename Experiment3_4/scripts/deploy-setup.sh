@@ -1,4 +1,4 @@
-#!/bin/bash
+# Pure deploy
 
 #!/bin/bash
 
@@ -31,6 +31,7 @@ fail() {
 
 # ==============================
 # STEP 0 — PRE-CHECKS
+# Ensures cluster connectivity and node existence
 # ==============================
 log "Checking kubectl connectivity..."
 kubectl cluster-info > /dev/null || fail "kubectl not connected"
@@ -40,18 +41,22 @@ kubectl get node "$NODE_NAME" > /dev/null || fail "Node $NODE_NAME not found"
 
 # ==============================
 # STEP 1 — CREATE NAMESPACE
+# Enables Istio Ambient Mesh
 # ==============================
 log "Creating namespace with ambient mesh enabled..."
 kubectl apply -f "$CLUSTER_SETUP_DIR/namespace.yaml"
 
 # ==============================
 # STEP 2 — LABEL NODE
+# Forces deterministic scheduling → SAME NODE → SAME ztunnel
 # ==============================
 log "Labeling node for deterministic scheduling..."
 bash "$CLUSTER_SETUP_DIR/node-label.sh"
 
 # ==============================
 # STEP 3 — DEPLOY WORKLOADS
+# svc-a → latency-sensitive
+# svc-b → noisy workload
 # ==============================
 log "Deploying svc-a and svc-b..."
 kubectl apply -f "$WORKLOADS_DIR/svc-a-deployment.yaml"
@@ -61,13 +66,15 @@ log "Creating services..."
 kubectl apply -f "$WORKLOADS_DIR/services.yaml"
 
 # ==============================
-# STEP 4 — DEPLOY CLIENT
+# STEP 4 — DEPLOY CLIENT (FORTIO)
+# Client generates traffic INSIDE cluster (no external noise)
 # ==============================
-log "Deploying client..."
+log "Deploying Fortio client..."
 kubectl apply -f "$WORKLOADS_DIR/client.yaml"
 
 # ==============================
 # STEP 5 — WAIT FOR ALL PODS
+# Ensures svc-a, svc-b, client are ready
 # ==============================
 log "Waiting for all pods to be ready..."
 kubectl wait --for=condition=Ready pods --all -n "$NAMESPACE" --timeout=180s \
@@ -75,6 +82,7 @@ kubectl wait --for=condition=Ready pods --all -n "$NAMESPACE" --timeout=180s \
 
 # ==============================
 # STEP 6 — VERIFY POD PLACEMENT
+# CRITICAL: ensures SAME NODE → SAME ztunnel
 # ==============================
 log "Verifying pod placement..."
 
@@ -98,6 +106,7 @@ fi
 
 # ==============================
 # STEP 7 — VERIFY ZTUNNEL
+# Ensures ambient dataplane is active on node
 # ==============================
 log "Verifying ztunnel presence..."
 
@@ -113,14 +122,16 @@ fi
 echo "✔ ztunnel on node → $ZTUNNEL_NODE"
 
 # ==============================
-# STEP 8 — VERIFY CLIENT TOOLING
+# STEP 8 — VERIFY CLIENT TOOLING (FORTIO)
+# Ensures Fortio is available inside client pod
 # ==============================
-log "Checking wrk inside client..."
+log "Verifying Fortio inside client..."
 
-kubectl exec -n "$NAMESPACE" client -- wrk --version > /dev/null 2>&1 \
-  || fail "wrk not installed in client pod"
-
-echo "✔ wrk available in client"
+if kubectl exec -n "$NAMESPACE" client -- fortio version > /dev/null 2>&1; then
+  echo "✔ Fortio available in client pod"
+else
+  fail "Fortio not installed in client pod"
+fi
 
 # ==============================
 # FINAL SUMMARY
@@ -133,5 +144,6 @@ echo "Node: $NODE_NAME"
 echo "Pods: svc-a, svc-b, client"
 echo "Placement: SAME NODE → $NODE_SVC_A"
 echo "Dataplane: ztunnel → $ZTUNNEL_NODE"
+echo "Client Tool: Fortio"
 echo "Status: READY FOR EXPERIMENT"
 echo "================================\n"

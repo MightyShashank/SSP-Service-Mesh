@@ -1,8 +1,0 @@
-Running 2m test @ http://svc-a.mesh-exp
-  2 threads and 50 connections
-  Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency    90.34ms   67.42ms 838.82ms   83.36%
-    Req/Sec   299.21    148.68     0.98k    63.03%
-  70639 requests in 2.00m, 833.28MB read
-Requests/sec:    588.48
-Transfer/sec:      6.94MB

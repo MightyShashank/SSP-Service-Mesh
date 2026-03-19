@@ -11,12 +11,13 @@
 
 #!/bin/bash
 
-OUTPUT="../results/raw/baseline.txt"
+set -euo pipefail
 
 echo "[Baseline] Running..."
 
 kubectl exec -n mesh-exp client -- \
-  wrk -t2 -c50 -d120s --latency http://svc-a.mesh-exp \
-  > $OUTPUT
+  fortio load -c 50 -qps 500 -t 120s -loglevel Error \
+  -json - \
+  http://svc-a.mesh-exp > ../results/raw/baseline_tmp.json
 
-echo "[Baseline] Done → $OUTPUT"
+echo "[Baseline] Done"

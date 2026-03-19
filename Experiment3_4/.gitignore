@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.pyc
+
+# Ignore generated results
+results/processed/
+results/plots/

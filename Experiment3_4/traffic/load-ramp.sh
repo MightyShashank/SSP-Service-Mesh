@@ -8,28 +8,25 @@
 
 #!/bin/bash
 
-#!/bin/bash
+set -euo pipefail
 
-OUT_DIR="../results/raw/load-ramp"
-mkdir -p $OUT_DIR
-
-loads=(100 300 600 1000)
+loads=(500 1000 2000 4000)
 
 for c in "${loads[@]}"
 do
   echo "Load level: $c"
 
-  # svc-a (constant)
   kubectl exec -n mesh-exp client -- \
-    wrk -t2 -c50 -d120s --latency http://svc-a.mesh-exp \
-    > $OUT_DIR/svc-a_$c.txt &
+    fortio load -c 50 -qps 500 -t 120s -loglevel Error \
+    -json - \
+    http://svc-a.mesh-exp > ../results/raw/svc-a_$c.json &
 
   PID_A=$!
 
-  # svc-b (increasing)
   kubectl exec -n mesh-exp client -- \
-    wrk -t4 -c$c -d120s --latency http://svc-b.mesh-exp \
-    > $OUT_DIR/svc-b_$c.txt &
+    fortio load -c 200 -qps $c -t 120s -loglevel Error \
+    -json - \
+    http://svc-b.mesh-exp > ../results/raw/svc-b_$c.json &
 
   PID_B=$!
 

@@ -33,7 +33,7 @@ The experiment isolates **dataplane contention** by ensuring:
 - Introduces contention
 
 ### Client
-- Generates traffic using `wrk`
+- Generates traffic using `fortio`
 - Runs on same node for consistency
 
 ---
