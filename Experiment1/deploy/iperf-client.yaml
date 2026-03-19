@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: iperf-client
+  namespace: exp-1-baseline
+  labels:
+    app: iperf-client
+spec:
+  nodeSelector:
+    kubernetes.io/hostname: ssp-worker-2
+  containers:
+  - name: iperf
+    image: networkstatic/iperf3
+    command: ["sleep", "3600"]
