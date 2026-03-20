@@ -89,7 +89,15 @@ chmod +x run-experiment.sh
 ## After above experiment to collect results: Setup (Docker):
 ```bash
 make build
-make run RUN_ID=<RUN_ID>
+
+# To run lvl1 analysis
+make run-lvl1 RUN_ID=<run_id>
+
+# To run lvl2 analysis
+make run-lvl2 RUN_ID=<run_id>
+
+# To run lvl3 analysis
+make run-lvl3 RUN_ID=<run_id>
 
 # Then to clean do this:
 make clean

@@ -1,0 +1,8 @@
+NAME                     CPU(cores)   MEMORY(bytes)   
+istio-cni-node-4rwsw     1m           21Mi            
+istio-cni-node-k7vz7     1m           17Mi            
+istio-cni-node-rq766     1m           15Mi            
+istiod-ccfbc7756-b8j5c   4m           42Mi            
+ztunnel-79ht2            1m           2Mi             
+ztunnel-dr2xd            6m           21Mi            
+ztunnel-lwq48            5m           6Mi             

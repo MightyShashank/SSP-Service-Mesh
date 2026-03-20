@@ -1,15 +1,11 @@
 FROM python:3.10-slim
 
-# Set working dir
+# Set working directory
 WORKDIR /app
 
-# Copy only requirements first (cache optimization)
+# Install dependencies
 COPY requirements.txt .
-
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy full project
+# Copy project files
 COPY . .
-
-# Default command
-ENTRYPOINT ["python", "analysis/analyze.py"]

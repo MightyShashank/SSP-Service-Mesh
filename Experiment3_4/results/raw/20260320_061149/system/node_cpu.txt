@@ -1,0 +1,4 @@
+NAME           CPU(cores)   CPU(%)   MEMORY(bytes)   MEMORY(%)   
+ssp-master-1   271m         6%       2828Mi          17%         
+ssp-worker-1   125m         6%       1415Mi          18%         
+ssp-worker-2   63m          3%       775Mi           9%          

@@ -1,0 +1,4 @@
+NAME                                CPU(cores)   MEMORY(bytes)   
+client                              0m           5Mi             
+svc-a-deployment-7ff44dc5d7-lt2kq   0m           4Mi             
+svc-b-deployment-548c7448c4-v9vbm   1m           13Mi            
