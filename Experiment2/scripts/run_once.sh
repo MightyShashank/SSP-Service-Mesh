@@ -2,7 +2,7 @@
 
 set -e
 
-NS=exp-1-baseline
+NS=exp-2-istio
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 OUT_DIR=results/raw/$TIMESTAMP
 
@@ -17,7 +17,6 @@ kubectl exec -n $NS wrk-client -- \
 wrk -t4 -c100 -d60s --latency http://$SERVER_IP:5678 \
 > $OUT_DIR/wrk.txt
 
-# 🔥 IMPORTANT FIX
 echo "Waiting for Prometheus scrape..."
 sleep 20
 
