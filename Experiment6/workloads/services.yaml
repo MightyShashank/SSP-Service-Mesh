@@ -1,0 +1,29 @@
+# These create the services for the 2 deployments svc-a-deployment and svc-b-deployment. They simulate the typical below expose operations (i.e., create services for a deployment):
+
+# kubectl expose deployment svc-a -n mesh-exp --port 80
+# kubectl expose deployment svc-b -n mesh-exp --port 5678
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-a
+  namespace: mesh-exp
+spec:
+  selector:
+    app: svc-a
+  ports:
+  - port: 80
+    targetPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-b
+  namespace: mesh-exp
+spec:
+  selector:
+    app: svc-b
+  ports:
+  - port: 80
+    targetPort: 5678

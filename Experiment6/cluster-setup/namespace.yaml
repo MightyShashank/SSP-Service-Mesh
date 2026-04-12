@@ -1,0 +1,9 @@
+# This is all about creating the namespace for the cluster setup. We will be using this namespace for all the resources we create in this cluster setup.
+# This ensured both services are in mesh and ensures ztunnel is used.
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mesh-exp
+  labels:
+    istio.io/dataplane-mode: ambient
