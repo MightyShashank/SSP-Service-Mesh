@@ -1,0 +1,1 @@
+# NOISY_RPS=0 — baseline trial, no noisy load generated

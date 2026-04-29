@@ -1,0 +1,25 @@
+# Deployment for service A (latency-sensitive / VIP service)
+# Issues requests at a fixed rate (100 RPS) — the service we measure latency for
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: svc-a-deployment
+  namespace: mesh-exp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: svc-a
+  template:
+    metadata:
+      labels:
+        app: svc-a
+    spec:
+      nodeSelector:
+        exp: mesh
+      containers:
+      - name: app
+        image: nginxdemos/hello
+        ports:
+        - containerPort: 80

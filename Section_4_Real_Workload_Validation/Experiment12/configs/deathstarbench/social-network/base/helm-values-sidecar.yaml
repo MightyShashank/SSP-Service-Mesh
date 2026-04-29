@@ -1,0 +1,43 @@
+# DSB Social-Network Helm values — Istio Sidecar Mode
+# Used for the sidecar comparison baseline in Latency CDF (Figure 2).
+# Requires sidecar injection to be enabled for the namespace.
+#
+# Deploy with:
+#   kubectl label namespace dsb-exp istio-injection=enabled --overwrite
+#   kubectl label namespace dsb-exp istio.io/dataplane-mode- --overwrite  # remove ambient label
+#   helm upgrade --install social-network <chart> --values helm-values-sidecar.yaml
+
+global:
+  # Enable sidecar injection
+  istio:
+    enabled: true
+
+  replicas: 1
+
+# Resource limits are the same as ambient mode.
+# The key difference is sidecar injection + per-pod Envoy proxy.
+
+social-graph-service:
+  replicas: 1
+  podAnnotations:
+    sidecar.istio.io/inject: "true"
+
+user-service:
+  replicas: 1
+  podAnnotations:
+    sidecar.istio.io/inject: "true"
+
+media-service:
+  replicas: 1
+  podAnnotations:
+    sidecar.istio.io/inject: "true"
+
+compose-post-service:
+  replicas: 1
+  podAnnotations:
+    sidecar.istio.io/inject: "true"
+
+nginx-web-server:
+  replicas: 1
+  podAnnotations:
+    sidecar.istio.io/inject: "true"

@@ -1,0 +1,11 @@
+# PeerAuthentication: enforce mTLS STRICT mode for dsb-exp namespace
+# ztunnel handles mTLS transparently — no application changes needed.
+
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: dsb-mtls-strict
+  namespace: dsb-exp
+spec:
+  mtls:
+    mode: STRICT

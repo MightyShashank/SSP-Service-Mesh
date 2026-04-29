@@ -1,0 +1,761 @@
+# burst mode: 200ms@1500RPS / 800ms quiet | duration=180s
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   478.93ms  206.93ms 723.46ms   69.93%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  411 requests in 1.01s, 342.37KB read
+Requests/sec:    406.39
+Transfer/sec:    338.53KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   201.64ms   62.98ms 348.67ms   64.79%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1093 requests in 1.00s, 0.89MB read
+Requests/sec:   1091.54
+Transfer/sec:      0.89MB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    60.25ms   33.19ms 174.08ms   82.62%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1310 requests in 1.01s, 1.07MB read
+Requests/sec:   1291.48
+Transfer/sec:      1.05MB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    58.03ms   33.73ms 158.85ms   80.86%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  655 requests in 1.26s, 546.08KB read
+Requests/sec:    520.19
+Transfer/sec:    433.69KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   284.56ms   92.11ms 442.62ms   57.13%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  829 requests in 1.01s, 690.56KB read
+Requests/sec:    824.29
+Transfer/sec:    686.64KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   176.87ms   63.18ms 373.50ms   64.20%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  854 requests in 1.00s, 711.39KB read
+Requests/sec:    852.59
+Transfer/sec:    710.22KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    82.70ms   36.25ms 173.31ms   60.03%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1153 requests in 1.00s, 0.94MB read
+Requests/sec:   1150.70
+Transfer/sec:      0.94MB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    84.36ms   56.41ms 234.88ms   78.96%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  659 requests in 1.25s, 548.95KB read
+Requests/sec:    529.07
+Transfer/sec:    440.72KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   218.89ms   55.76ms 348.16ms   65.16%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1176 requests in 1.02s, 0.96MB read
+Requests/sec:   1155.37
+Transfer/sec:      0.94MB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   201.36ms   65.60ms 338.43ms   63.36%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  626 requests in 1.18s, 521.46KB read
+Requests/sec:    531.55
+Transfer/sec:    442.79KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   115.33ms   65.64ms 249.34ms   52.66%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  660 requests in 1.12s, 549.79KB read
+Requests/sec:    590.47
+Transfer/sec:    491.87KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    84.34ms   55.77ms 230.66ms   80.28%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  659 requests in 1.11s, 549.18KB read
+Requests/sec:    596.06
+Transfer/sec:    496.73KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   247.03ms   55.30ms 380.42ms   67.85%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1048 requests in 997.41ms, 0.85MB read
+Requests/sec:   1050.73
+Transfer/sec:      0.85MB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    60.51ms   28.26ms 154.11ms   84.20%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  661 requests in 1.19s, 550.62KB read
+Requests/sec:    553.53
+Transfer/sec:    461.09KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     -nanus    -nanus   0.00us    0.00%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  5 requests in 1.21s, 4.17KB read
+Requests/sec:      4.12
+Transfer/sec:      3.43KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   150.82ms   46.40ms 274.94ms   65.84%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  609 requests in 1.18s, 507.53KB read
+Requests/sec:    514.12
+Transfer/sec:    428.46KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   204.92ms   33.81ms 321.54ms   64.46%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  804 requests in 1.01s, 669.97KB read
+Requests/sec:    797.02
+Transfer/sec:    664.15KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   387.90ms   66.67ms 532.48ms   63.44%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  334 requests in 1.17s, 278.22KB read
+Requests/sec:    286.44
+Transfer/sec:    238.61KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    65.60ms   40.61ms 199.68ms   82.37%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  660 requests in 1.22s, 549.79KB read
+Requests/sec:    540.26
+Transfer/sec:    450.04KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    89.46ms   39.65ms 216.45ms   67.59%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1267 requests in 999.08ms, 1.03MB read
+Requests/sec:   1268.17
+Transfer/sec:      1.03MB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   268.45ms   49.97ms 377.60ms   71.51%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  920 requests in 1.00s, 766.37KB read
+Requests/sec:    918.95
+Transfer/sec:    765.49KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    65.95ms   32.35ms 161.02ms   79.79%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1250 requests in 1.00s, 1.02MB read
+Requests/sec:   1247.55
+Transfer/sec:      1.01MB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   435.61ms   49.03ms 531.46ms   64.92%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  840 requests in 1.00s, 699.96KB read
+Requests/sec:    839.63
+Transfer/sec:    699.65KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   282.16ms  114.96ms 523.01ms   63.64%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  674 requests in 1.00s, 561.68KB read
+Requests/sec:    673.34
+Transfer/sec:    561.13KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   144.54ms   79.72ms 336.64ms   58.00%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  652 requests in 1.14s, 543.12KB read
+Requests/sec:    570.47
+Transfer/sec:    475.21KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    94.00ms   45.76ms 195.46ms   56.19%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1304 requests in 995.70ms, 1.06MB read
+Requests/sec:   1309.63
+Transfer/sec:      1.07MB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     -nanus    -nanus   0.00us    0.00%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  2 requests in 1.33s, 1.67KB read
+Requests/sec:      1.51
+Transfer/sec:      1.25KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   151.13ms   49.53ms 285.44ms   66.28%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1281 requests in 1.00s, 1.04MB read
+Requests/sec:   1278.83
+Transfer/sec:      1.04MB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   160.02ms   58.72ms 319.74ms   66.06%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1203 requests in 1.01s, 0.98MB read
+Requests/sec:   1189.05
+Transfer/sec:      0.97MB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   120.55ms   63.78ms 241.79ms   50.36%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1255 requests in 1.01s, 1.02MB read
+Requests/sec:   1245.48
+Transfer/sec:      1.01MB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   241.34ms   69.13ms 369.41ms   63.14%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1204 requests in 1.01s, 0.98MB read
+Requests/sec:   1190.73
+Transfer/sec:      0.97MB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     -nanus    -nanus   0.00us    0.00%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  3 requests in 1.30s, 2.96KB read
+Requests/sec:      2.31
+Transfer/sec:      2.28KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   279.12ms   55.17ms 384.26ms   64.71%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1005 requests in 1.01s, 837.41KB read
+Requests/sec:    993.08
+Transfer/sec:    827.48KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   234.07ms   63.42ms 382.46ms   68.14%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1041 requests in 1.01s, 867.39KB read
+Requests/sec:   1031.96
+Transfer/sec:    859.86KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    81.29ms   31.41ms 165.63ms   58.00%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1296 requests in 1.00s, 1.05MB read
+Requests/sec:   1292.16
+Transfer/sec:      1.05MB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    63.39ms   28.87ms 145.92ms   65.45%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  667 requests in 1.14s, 555.62KB read
+Requests/sec:    586.81
+Transfer/sec:    488.82KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    73.65ms   45.47ms 197.63ms   80.51%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  634 requests in 1.11s, 528.13KB read
+Requests/sec:    571.69
+Transfer/sec:    476.22KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   198.68ms   56.77ms 354.56ms   64.47%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  884 requests in 1.01s, 736.38KB read
+Requests/sec:    879.25
+Transfer/sec:    732.42KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    67.53ms   43.40ms 201.60ms   82.37%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1262 requests in 1.00s, 1.03MB read
+Requests/sec:   1256.73
+Transfer/sec:      1.02MB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   239.43ms   43.75ms 324.35ms   69.57%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  579 requests in 1.26s, 482.31KB read
+Requests/sec:    458.50
+Transfer/sec:    381.94KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   183.04ms   50.24ms 310.02ms   68.42%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1123 requests in 1.00s, 0.91MB read
+Requests/sec:   1118.45
+Transfer/sec:      0.91MB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   328.71ms   63.77ms 463.36ms   67.87%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  832 requests in 1.00s, 693.06KB read
+Requests/sec:    830.13
+Transfer/sec:    691.50KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   156.11ms   55.75ms 270.08ms   62.55%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1298 requests in 1.00s, 1.06MB read
+Requests/sec:   1292.48
+Transfer/sec:      1.05MB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    74.14ms   52.83ms 237.57ms   82.21%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1318 requests in 1.00s, 1.07MB read
+Requests/sec:   1315.63
+Transfer/sec:      1.07MB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    95.11ms   62.51ms 270.85ms   80.67%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  661 requests in 1.10s, 550.62KB read
+Requests/sec:    600.05
+Transfer/sec:    499.84KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    79.00ms   42.33ms 225.66ms   69.16%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1312 requests in 1.00s, 1.07MB read
+Requests/sec:   1309.03
+Transfer/sec:      1.06MB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    70.20ms   53.85ms 239.36ms   81.71%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  658 requests in 1.28s, 548.12KB read
+Requests/sec:    512.20
+Transfer/sec:    426.67KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    53.99ms   32.77ms 182.14ms   85.34%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  659 requests in 1.22s, 548.95KB read
+Requests/sec:    539.08
+Transfer/sec:    449.06KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    48.49ms   24.34ms 140.16ms   83.66%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  664 requests in 1.19s, 553.12KB read
+Requests/sec:    557.07
+Transfer/sec:    464.05KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    48.56ms   25.10ms 145.15ms   84.39%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  650 requests in 1.19s, 541.46KB read
+Requests/sec:    546.34
+Transfer/sec:    455.11KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    71.32ms   30.03ms 170.62ms   63.66%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1254 requests in 1.00s, 1.02MB read
+Requests/sec:   1253.59
+Transfer/sec:      1.02MB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   323.71ms   42.26ms 414.72ms   67.00%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  890 requests in 1.00s, 741.61KB read
+Requests/sec:    889.69
+Transfer/sec:    741.35KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   215.40ms   54.97ms 337.66ms   63.01%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  521 requests in 1.14s, 434.00KB read
+Requests/sec:    455.07
+Transfer/sec:    379.08KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   101.09ms   58.65ms 262.14ms   63.91%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  658 requests in 1.12s, 548.12KB read
+Requests/sec:    585.87
+Transfer/sec:    488.03KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   149.45ms   37.72ms 241.79ms   64.89%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1174 requests in 1.00s, 0.96MB read
+Requests/sec:   1173.85
+Transfer/sec:      0.95MB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     -nanus    -nanus   0.00us    0.00%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  4 requests in 1.28s, 3.33KB read
+Requests/sec:      3.12
+Transfer/sec:      2.60KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   135.12ms   52.82ms 241.02ms   62.90%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1057 requests in 1.01s, 0.86MB read
+Requests/sec:   1050.01
+Transfer/sec:      0.85MB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   169.48ms   35.78ms 256.13ms   65.50%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1122 requests in 1.00s, 0.91MB read
+Requests/sec:   1121.45
+Transfer/sec:      0.91MB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   149.05ms   59.11ms 291.33ms   58.92%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1280 requests in 1.00s, 1.04MB read
+Requests/sec:   1277.59
+Transfer/sec:      1.04MB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   196.14ms   55.44ms 319.23ms   67.05%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1219 requests in 1.01s, 0.99MB read
+Requests/sec:   1212.21
+Transfer/sec:      0.99MB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   122.64ms   42.56ms 246.14ms   65.99%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  641 requests in 1.18s, 533.96KB read
+Requests/sec:    545.27
+Transfer/sec:    454.21KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   141.03ms   43.81ms 259.97ms   68.02%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  620 requests in 1.13s, 516.70KB read
+Requests/sec:    549.83
+Transfer/sec:    458.22KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   119.89ms   72.27ms 295.42ms   62.60%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  659 requests in 1.11s, 548.95KB read
+Requests/sec:    595.29
+Transfer/sec:    495.88KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    54.49ms   28.10ms 152.19ms   84.02%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  660 requests in 1.13s, 549.79KB read
+Requests/sec:    586.40
+Transfer/sec:    488.48KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    87.13ms   36.02ms 175.10ms   59.13%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1224 requests in 1.00s, 1.00MB read
+Requests/sec:   1220.96
+Transfer/sec:      0.99MB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    53.15ms   31.87ms 167.42ms   83.69%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  661 requests in 1.20s, 550.62KB read
+Requests/sec:    552.12
+Transfer/sec:    459.92KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    61.07ms   36.82ms 195.07ms   84.18%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  654 requests in 1.22s, 544.79KB read
+Requests/sec:    536.79
+Transfer/sec:    447.15KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   112.30ms   56.61ms 236.16ms   60.14%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1283 requests in 1.00s, 1.04MB read
+Requests/sec:   1281.61
+Transfer/sec:      1.04MB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    69.35ms   44.94ms 202.62ms   79.91%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  659 requests in 1.10s, 548.95KB read
+Requests/sec:    597.65
+Transfer/sec:    497.85KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   149.70ms   56.19ms 278.27ms   65.67%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1136 requests in 1.00s, 0.92MB read
+Requests/sec:   1132.91
+Transfer/sec:      0.92MB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   124.66ms   51.66ms 256.51ms   61.08%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1262 requests in 1.00s, 1.03MB read
+Requests/sec:   1259.00
+Transfer/sec:      1.02MB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   316.30ms   58.29ms 428.80ms   65.29%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1045 requests in 1.01s, 0.85MB read
+Requests/sec:   1038.04
+Transfer/sec:    864.93KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   192.15ms   60.26ms 348.42ms   62.85%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1069 requests in 1.00s, 0.87MB read
+Requests/sec:   1068.71
+Transfer/sec:      0.87MB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    59.24ms   26.02ms 137.47ms   78.76%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  635 requests in 1.19s, 528.96KB read
+Requests/sec:    535.34
+Transfer/sec:    445.94KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   121.05ms   43.30ms 232.19ms   65.64%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1173 requests in 1.00s, 0.95MB read
+Requests/sec:   1167.84
+Transfer/sec:      0.95MB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   175.84ms   71.50ms 362.75ms   65.97%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  909 requests in 1.00s, 757.20KB read
+Requests/sec:    906.83
+Transfer/sec:    755.40KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    67.31ms   39.06ms 174.46ms   77.66%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  652 requests in 1.17s, 543.12KB read
+Requests/sec:    558.97
+Transfer/sec:    465.63KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    69.69ms   38.14ms 171.90ms   79.83%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1207 requests in 1.00s, 0.98MB read
+Requests/sec:   1203.42
+Transfer/sec:      0.98MB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   144.99ms   74.43ms 310.02ms   61.87%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1274 requests in 1.01s, 1.04MB read
+Requests/sec:   1266.46
+Transfer/sec:      1.03MB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   175.97ms   85.83ms 354.56ms   60.62%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1317 requests in 1.00s, 1.07MB read
+Requests/sec:   1313.42
+Transfer/sec:      1.07MB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    80.76ms   38.73ms 203.39ms   56.92%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1302 requests in 1.00s, 1.06MB read
+Requests/sec:   1296.41
+Transfer/sec:      1.05MB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    87.67ms   44.98ms 232.06ms   60.33%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  660 requests in 1.21s, 549.79KB read
+Requests/sec:    546.76
+Transfer/sec:    455.45KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   127.28ms   45.73ms 256.51ms   67.15%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1166 requests in 1.00s, 0.95MB read
+Requests/sec:   1164.93
+Transfer/sec:      0.95MB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   109.34ms   60.19ms 257.28ms   57.54%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1215 requests in 1.00s, 0.99MB read
+Requests/sec:   1211.44
+Transfer/sec:      0.99MB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   197.42ms   44.01ms 301.82ms   66.70%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1091 requests in 1.00s, 0.89MB read
+Requests/sec:   1088.21
+Transfer/sec:      0.89MB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   112.82ms   68.64ms 274.18ms   61.38%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  553 requests in 1.31s, 460.65KB read
+Requests/sec:    421.09
+Transfer/sec:    350.78KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     -nanus    -nanus   0.00us    0.00%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  2 requests in 1.36s, 1.67KB read
+Requests/sec:      1.47
+Transfer/sec:      1.22KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   156.42ms   37.99ms 243.46ms   63.88%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1187 requests in 1.00s, 0.97MB read
+Requests/sec:   1186.04
+Transfer/sec:      0.96MB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   414.28ms   60.45ms 507.65ms   77.81%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  369 requests in 1.26s, 307.38KB read
+Requests/sec:    293.20
+Transfer/sec:    244.24KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    82.03ms   60.89ms 250.37ms   80.15%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  657 requests in 1.18s, 547.52KB read
+Requests/sec:    557.93
+Transfer/sec:    464.96KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    54.47ms   30.81ms 169.09ms   84.45%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  660 requests in 1.20s, 549.79KB read
+Requests/sec:    548.32
+Transfer/sec:    456.75KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    57.06ms   26.84ms 143.23ms   81.71%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  659 requests in 1.21s, 548.95KB read
+Requests/sec:    546.61
+Transfer/sec:    455.33KB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   226.36ms   50.70ms 341.76ms   62.83%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1063 requests in 1.00s, 0.86MB read
+Requests/sec:   1061.08
+Transfer/sec:      0.86MB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    93.45ms   58.31ms 239.23ms   65.00%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  1309 requests in 1.01s, 1.06MB read
+Requests/sec:   1300.76
+Transfer/sec:      1.06MB
+Running 1s test @ http://127.0.0.1:18081/
+  2 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    61.44ms   34.02ms 179.46ms   81.79%
+    Req/Sec       -nan      -nan   0.00      0.00%
+  662 requests in 1.10s, 551.45KB read
+Requests/sec:    599.13
+Transfer/sec:    499.08KB

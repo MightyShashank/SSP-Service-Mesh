@@ -1,0 +1,14 @@
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+data/raw/*/
+data/processed/csv/
+results/figures/*.png
+results/figures/*.pdf
+results/figures/**/*.png
+results/figures/**/*.pdf
+results/tables/*.csv
+results/reports/*.md
+*.egg-info/
+.DS_Store

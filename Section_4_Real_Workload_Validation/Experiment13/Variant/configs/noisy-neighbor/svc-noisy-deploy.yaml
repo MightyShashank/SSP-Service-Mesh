@@ -1,0 +1,124 @@
+---
+# svc-noisy: synthetic HTTP/1.1 noisy-neighbor service.
+#
+# VARIANT: Pinned to worker-1 so it uses a SEPARATE ztunnel instance
+# from the DSB victim-tier services (which live on worker-0).
+# This is the control condition — noise exists in the cluster but
+# does NOT share a ztunnel with the victim. Expected result: no
+# measurable tail-latency amplification on DSB.
+#
+# Compare to Experiment13/configs/noisy-neighbor/svc-noisy-deploy.yaml
+# where both svc-noisy and victim services share worker-0's ztunnel.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: svc-noisy
+  namespace: dsb-exp
+  labels:
+    app: svc-noisy
+    experiment: "13-variant"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: svc-noisy
+  template:
+    metadata:
+      labels:
+        app: svc-noisy
+        experiment: "13-variant"
+    spec:
+      # Pin to worker-1 — DIFFERENT ztunnel from DSB victim services on worker-0
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: role
+                    operator: In
+                    values:
+                      - worker-1
+      containers:
+        - name: svc-noisy
+          image: nginx:1.25-alpine
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "64Mi"
+            limits:
+              cpu: "500m"
+              memory: "128Mi"
+---
+# svc-noisy-backend: the backend that svc-noisy talks to.
+# Also on worker-1 — all noisy traffic stays on the worker-1 ztunnel,
+# completely isolated from the worker-0 ztunnel used by DSB victim services.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: svc-noisy-backend
+  namespace: dsb-exp
+  labels:
+    app: svc-noisy-backend
+    experiment: "13-variant"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: svc-noisy-backend
+  template:
+    metadata:
+      labels:
+        app: svc-noisy-backend
+        experiment: "13-variant"
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: role
+                    operator: In
+                    values:
+                      - worker-1
+      containers:
+        - name: backend
+          image: nginx:1.25-alpine
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "64Mi"
+            limits:
+              cpu: "500m"
+              memory: "128Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-noisy
+  namespace: dsb-exp
+  labels:
+    app: svc-noisy
+spec:
+  selector:
+    app: svc-noisy
+  ports:
+    - port: 80
+      targetPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-noisy-backend
+  namespace: dsb-exp
+  labels:
+    app: svc-noisy-backend
+spec:
+  selector:
+    app: svc-noisy-backend
+  ports:
+    - port: 80
+      targetPort: 80

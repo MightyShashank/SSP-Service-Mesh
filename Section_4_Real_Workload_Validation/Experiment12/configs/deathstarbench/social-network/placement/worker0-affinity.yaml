@@ -1,0 +1,38 @@
+# Placement overlay: Pin victim-tier DSB services to worker-0.
+#
+# Node: default-pool-ssp-11b2c93c3e14  (role=worker-0)
+# These services share ztunnel with the noisy neighbour in Experiment 13.
+#
+# The DSB _baseDeployment.tpl template supports:
+#   nodeName: <node-name>   ← direct node binding (bypasses scheduler)
+# It does NOT support nodeSelector or affinity at the Helm values level.
+#
+# Services pinned here (actual DSB subchart names):
+#   - social-graph-service
+#   - user-service
+#   - media-service
+#   - url-shorten-service
+#   - text-service
+#   - unique-id-service
+#   - user-mention-service
+
+social-graph-service:
+  nodeName: default-pool-ssp-11b2c93c3e14
+
+user-service:
+  nodeName: default-pool-ssp-11b2c93c3e14
+
+media-service:
+  nodeName: default-pool-ssp-11b2c93c3e14
+
+url-shorten-service:
+  nodeName: default-pool-ssp-11b2c93c3e14
+
+text-service:
+  nodeName: default-pool-ssp-11b2c93c3e14
+
+unique-id-service:
+  nodeName: default-pool-ssp-11b2c93c3e14
+
+user-mention-service:
+  nodeName: default-pool-ssp-11b2c93c3e14

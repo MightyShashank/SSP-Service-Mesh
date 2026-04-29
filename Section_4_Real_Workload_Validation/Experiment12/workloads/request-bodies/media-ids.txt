@@ -1,0 +1,14 @@
+# Media IDs for media-service tests.
+# Used by compose-post Lua script when attaching media to posts.
+# Format: one media ID per line.
+# These are synthetic IDs — media-service handles them as opaque references.
+1
+100
+500
+1000
+5000
+10000
+25000
+50000
+75000
+100000

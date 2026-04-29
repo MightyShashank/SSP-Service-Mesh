@@ -1,0 +1,40 @@
+# Istio Ambient Mode install values.
+# Use with: istioctl install -f install-ambient.yaml
+# Only needed if Istio is NOT already installed on the cluster.
+# Skip if Istio Ambient is already running (check: kubectl get pods -n istio-system | grep ztunnel).
+
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+metadata:
+  namespace: istio-system
+spec:
+  profile: ambient
+
+  # Minimal resource footprint for 3-node, 4-vCPU cluster
+  components:
+    pilot:
+      k8s:
+        resources:
+          requests:
+            cpu: 200m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+
+    # ztunnel DaemonSet (one per node) — the core of ambient mode
+    ztunnel:
+      enabled: true
+
+    # CNI for transparent traffic redirection
+    cni:
+      enabled: true
+
+  # MeshConfig: tracing + access logging
+  meshConfig:
+    accessLogFile: /dev/stdout
+    defaultConfig:
+      tracing:
+        sampling: 100.0
+        zipkin:
+          address: jaeger-collector.observability:9411

@@ -1,0 +1,15 @@
+# Optional: ResourceQuotas for load-gen node.
+# Ensures wrk2 pods do not consume excessive resources on the load-gen node,
+# leaving room for kube-system processes.
+
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: loadgen-quota
+  namespace: dsb-exp
+spec:
+  hard:
+    requests.cpu: "3"           # Reserve 1 vCPU for kube-system on load-gen
+    requests.memory: "6Gi"      # Reserve 2 GB for kube-system on load-gen
+    limits.cpu: "4"
+    limits.memory: "8Gi"

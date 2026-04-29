@@ -1,0 +1,44 @@
+# Jaeger all-in-one Helm values for Experiment 12.
+# Deployed on worker-1 via nodeSelector.
+# 100% sampling for full trace collection during baseline.
+#
+# Used by: scripts/deploy/deploy-observability.sh
+
+# Jaeger all-in-one (collector + query + UI in one pod)
+provisionDataStore:
+  type: none         # In-memory storage (sufficient for baseline runs)
+
+allInOne:
+  enabled: true
+  replicas: 1
+
+  nodeSelector:
+    role: worker-1
+
+  extraEnv:
+  - name: MEMORY_MAX_TRACES
+    value: "500000"
+
+  resources:
+    requests:
+      cpu: "200m"
+      memory: "512Mi"
+    limits:
+      cpu: "1000m"
+      memory: "4Gi"
+
+  # Sampling: 100% for baseline (every request is traced)
+  sampling:
+    param: 1.0
+
+# Service ports
+service:
+  type: ClusterIP
+
+query:
+  enabled: true
+
+collector:
+  enabled: true
+  zipkin:
+    enabled: true    # Istio sends traces via Zipkin format

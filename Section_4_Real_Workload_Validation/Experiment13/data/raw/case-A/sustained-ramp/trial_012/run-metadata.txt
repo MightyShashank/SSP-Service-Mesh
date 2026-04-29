@@ -1,0 +1,12 @@
+Experiment: 13
+Trial: trial_012
+Run ID: 20260428_004639
+Victim Case: A
+Noisy Mode: sustained-ramp
+Noisy RPS: 300
+Start: 2026-04-28 00:47:47
+End: 2026-04-28 00:50:47
+DSB Rates: compose=50 home=100 user=100
+Worker-0: default-pool-ssp-11b2c93c3e14
+ztunnel pod: ztunnel-z54hp
+Config hash: 5b754a8

@@ -1,0 +1,33 @@
+# DSB Social-Network Helm values — No Service Mesh
+# Used for the no-mesh comparison baseline in Latency CDF (Figure 2).
+# Requires disabling both ambient and sidecar injection for the namespace.
+#
+# Deploy with:
+#   kubectl label namespace dsb-exp istio.io/dataplane-mode- --overwrite
+#   kubectl label namespace dsb-exp istio-injection- --overwrite
+#   helm upgrade --install social-network <chart> --values helm-values-nomesh.yaml
+
+global:
+  istio:
+    enabled: false
+
+  replicas: 1
+
+# Same resource limits — only the mesh is absent.
+# No per-pod proxy, no ztunnel interception.
+# Baseline for measuring pure mesh overhead.
+
+social-graph-service:
+  replicas: 1
+
+user-service:
+  replicas: 1
+
+media-service:
+  replicas: 1
+
+compose-post-service:
+  replicas: 1
+
+nginx-web-server:
+  replicas: 1

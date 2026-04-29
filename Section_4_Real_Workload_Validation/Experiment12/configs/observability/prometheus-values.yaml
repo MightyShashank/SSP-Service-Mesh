@@ -1,0 +1,71 @@
+# Prometheus Helm values for Experiment 12.
+# Deployed on worker-1 via nodeSelector.
+# Scrapes ztunnel metrics and Istio control plane.
+#
+# Used by: scripts/deploy/deploy-observability.sh (optional)
+
+server:
+  nodeSelector:
+    role: worker-1
+
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "1Gi"
+
+  retention: "6h"     # Short retention — only needed for experiment window
+  global:
+    scrape_interval: 15s
+    evaluation_interval: 15s
+
+# Scrape configs for ztunnel and Istio
+serverFiles:
+  prometheus.yml:
+    scrape_configs:
+    # ztunnel metrics (Rust-based, exposes Prometheus metrics on port 15020)
+    - job_name: 'ztunnel'
+      kubernetes_sd_configs:
+      - role: pod
+        namespaces:
+          names: ['istio-system']
+      relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_label_app]
+        regex: ztunnel
+        action: keep
+      - source_labels: [__meta_kubernetes_pod_ip]
+        target_label: __address__
+        replacement: '${1}:15020'
+
+    # Istio control plane (istiod)
+    - job_name: 'istiod'
+      kubernetes_sd_configs:
+      - role: pod
+        namespaces:
+          names: ['istio-system']
+      relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_label_app]
+        regex: istiod
+        action: keep
+      - source_labels: [__meta_kubernetes_pod_ip]
+        target_label: __address__
+        replacement: '${1}:15014'
+
+    # DSB pods (application metrics, if available)
+    - job_name: 'dsb-pods'
+      kubernetes_sd_configs:
+      - role: pod
+        namespaces:
+          names: ['dsb-exp']
+
+# Disable components not needed for this experiment
+alertmanager:
+  enabled: false
+pushgateway:
+  enabled: false
+nodeExporter:
+  enabled: false
+kubeStateMetrics:
+  enabled: false

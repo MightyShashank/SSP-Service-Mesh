@@ -1,0 +1,13 @@
+# Telemetry API config: enables Jaeger tracing for the dsb-exp namespace
+# Applied after Istio Ambient is installed and Jaeger is running.
+
+apiVersion: telemetry.istio.io/v1alpha1
+kind: Telemetry
+metadata:
+  name: dsb-tracing
+  namespace: dsb-exp
+spec:
+  tracing:
+  - providers:
+    - name: jaeger
+    randomSamplingPercentage: 100.0   # 100% sampling — required for baseline flame chart

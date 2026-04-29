@@ -1,0 +1,26 @@
+# Istio MeshConfig for Experiment 12
+# Enables distributed tracing via Jaeger and sets access logging.
+
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+metadata:
+  name: exp12-meshconfig
+  namespace: istio-system
+spec:
+  meshConfig:
+    # Enable access logging for ztunnel (useful for debugging)
+    accessLogFile: /dev/stdout
+
+    # Distributed tracing → Jaeger on worker-1
+    defaultConfig:
+      tracing:
+        sampling: 100.0          # 100% sampling during baseline
+        zipkin:
+          address: jaeger-collector.observability:9411
+
+    # Extension providers for telemetry API
+    extensionProviders:
+    - name: jaeger
+      opentelemetry:
+        service: jaeger-collector.observability.svc.cluster.local
+        port: 4317

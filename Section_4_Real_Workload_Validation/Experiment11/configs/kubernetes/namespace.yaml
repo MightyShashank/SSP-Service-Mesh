@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dsb-exp11
+  labels:
+    # NOTE: No istio.io/dataplane-mode label here.
+    # This namespace runs plain Kubernetes — zero Istio sidecar or ambient mesh.
+    experiment: "11"
+    mesh: "none"

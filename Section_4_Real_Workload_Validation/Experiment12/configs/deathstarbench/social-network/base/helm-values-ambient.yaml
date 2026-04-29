@@ -1,0 +1,206 @@
+# DSB Social-Network Helm values — Istio Ambient Mode
+# Used with: helm upgrade --install social-network <chart> --values helm-values-ambient.yaml
+#
+# Tuned for:
+#   - 4-vCPU / 8 GB nodes (3-node cluster)
+#   - Istio Ambient mode (ztunnel DaemonSet handles mTLS — NO sidecar injection needed)
+#   - External Jaeger: 100% sampling (const sampler, param=1)
+#   - Standalone MongoDB + Redis (no sharding, no cluster)
+#
+# Service name reference (actual DSB Helm subchart names):
+#   Victim-tier  → social-graph-service, user-service, media-service,
+#                  url-shorten-service, text-service, unique-id-service, user-mention-service
+#   Mid-tier     → compose-post-service, post-storage-service, home-timeline-service,
+#                  user-timeline-service, nginx-thrift, media-frontend
+#   Databases    → social-graph-mongodb, social-graph-redis, post-storage-mongodb,
+#                  post-storage-memcached, home-timeline-redis, user-timeline-mongodb,
+#                  user-timeline-redis, media-mongodb, media-memcached,
+#                  user-mongodb, user-memcached, url-shorten-mongodb, url-shorten-memcached
+#   Tracing      → jaeger (built-in subchart, deployed on worker-1)
+
+global:
+  replicas: 1
+  imagePullPolicy: "IfNotPresent"
+  restartPolicy: Always
+  serviceType: ClusterIP
+  dockerRegistry: docker.io
+  defaultImageVersion: latest
+
+  # ── Standalone datastores (no sharding/clustering for baseline) ───────────
+  redis:
+    standalone:
+      enabled: true
+    cluster:
+      enabled: false
+    replication:
+      enabled: false
+  memcached:
+    standalone:
+      enabled: true
+    cluster:
+      enabled: false
+  mongodb:
+    standalone:
+      enabled: true
+    sharding:
+      enabled: false
+
+  # ── Global resource defaults (applies to all services without per-service override) ──
+  # Sized for 12+ services on 4-vCPU / 8 GB nodes
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "64Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+
+  # ── Jaeger tracing — 100% sampling for baseline characterisation ──────────
+  # const sampler with param=1 → every request is traced
+  jaeger:
+    localAgentHostPort: "jaeger:6831"   # points to DSB built-in jaeger service
+    samplerType: const
+    samplerParam: 1
+    queueSize: 1000000
+    bufferFlushInterval: 10
+    disabled: false
+    logSpans: false
+
+# ════════════════════════════════════════════════════════════
+# VICTIM-TIER SERVICES  (pinned to worker-0 by placement overlay)
+# ════════════════════════════════════════════════════════════
+
+social-graph-service:
+  container:
+    resources:
+      requests:
+        cpu: "200m"
+        memory: "256Mi"
+      limits:
+        cpu: "1000m"
+        memory: "1Gi"
+
+user-service:
+  container:
+    resources:
+      requests:
+        cpu: "200m"
+        memory: "256Mi"
+      limits:
+        cpu: "1000m"
+        memory: "1Gi"
+
+media-service:
+  container:
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "128Mi"
+      limits:
+        cpu: "500m"
+        memory: "512Mi"
+
+url-shorten-service:
+  container:
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "128Mi"
+      limits:
+        cpu: "500m"
+        memory: "512Mi"
+
+text-service:
+  container:
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "128Mi"
+      limits:
+        cpu: "500m"
+        memory: "512Mi"
+
+unique-id-service:
+  container:
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "128Mi"
+      limits:
+        cpu: "500m"
+        memory: "512Mi"
+
+user-mention-service:
+  container:
+    resources:
+      requests:
+        cpu: "50m"
+        memory: "64Mi"
+      limits:
+        cpu: "250m"
+        memory: "256Mi"
+
+# ════════════════════════════════════════════════════════════
+# MID-TIER SERVICES  (pinned to worker-1 by placement overlay)
+# ════════════════════════════════════════════════════════════
+
+compose-post-service:
+  container:
+    resources:
+      requests:
+        cpu: "200m"
+        memory: "256Mi"
+      limits:
+        cpu: "1000m"
+        memory: "1Gi"
+
+post-storage-service:
+  container:
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "128Mi"
+      limits:
+        cpu: "500m"
+        memory: "512Mi"
+
+home-timeline-service:
+  container:
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "128Mi"
+      limits:
+        cpu: "500m"
+        memory: "512Mi"
+
+user-timeline-service:
+  container:
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "128Mi"
+      limits:
+        cpu: "500m"
+        memory: "512Mi"
+
+# nginx-thrift is the actual name of the nginx frontend subchart in DSB
+nginx-thrift:
+  container:
+    resources:
+      requests:
+        cpu: "200m"
+        memory: "256Mi"
+      limits:
+        cpu: "1000m"
+        memory: "1Gi"
+
+media-frontend:
+  container:
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "128Mi"
+      limits:
+        cpu: "500m"
+        memory: "512Mi"

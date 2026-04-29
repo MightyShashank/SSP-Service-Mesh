@@ -1,0 +1,13 @@
+# churn mode: 75 new-conns/s, payload=200RPS | duration=180s
+Running 3m test @ http://127.0.0.1:18081/
+  4 threads and 75 connections
+  Thread calibration: mean lat.: 26.323ms, rate sampling interval: 88ms
+  Thread calibration: mean lat.: 28.552ms, rate sampling interval: 74ms
+  Thread calibration: mean lat.: 26.493ms, rate sampling interval: 89ms
+  Thread calibration: mean lat.: 26.758ms, rate sampling interval: 91ms
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    81.95ms  312.15ms   3.45s    95.90%
+    Req/Sec    50.11     78.08   666.00     81.69%
+  35967 requests in 3.00m, 29.26MB read
+Requests/sec:    199.71
+Transfer/sec:    166.36KB

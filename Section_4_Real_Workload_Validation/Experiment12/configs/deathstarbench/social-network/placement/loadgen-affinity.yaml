@@ -1,0 +1,17 @@
+# nodeAffinity overlay: Pin wrk2 load generator pods to load-gen node.
+# Isolates load generation from the experiment nodes.
+
+# Note: wrk2 is typically run as a bare process via kubectl exec or as a
+# dedicated pod. This overlay is used if wrk2 is deployed as a Kubernetes job.
+
+# If wrk2 runs as a standalone pod:
+wrk2-loadgen:
+  nodeSelector:
+    role: load-gen
+  resources:
+    requests:
+      cpu: "2"            # Dedicate 2 cores for wrk2 (open-loop load gen)
+      memory: "1Gi"
+    limits:
+      cpu: "3"
+      memory: "2Gi"

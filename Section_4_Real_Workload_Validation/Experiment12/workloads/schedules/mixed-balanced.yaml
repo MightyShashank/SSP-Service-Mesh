@@ -1,0 +1,41 @@
+# Mixed-balanced workload schedule.
+# Default schedule for Experiment 12: all 3 endpoints simultaneously.
+# Represents realistic mixed-workload behavior.
+
+name: mixed-balanced
+description: |
+  All 3 DSB endpoints are driven simultaneously during measurement.
+  This is the default schedule for Experiment 12 baseline characterization.
+
+endpoints:
+  - name: compose-post
+    path: /wrk2-api/post/compose
+    method: POST
+    lua_script: configs/wrk2/compose-post.lua
+    rps: 200
+    threads: 2
+    connections: 50
+    simultaneous: true
+
+  - name: read-home-timeline
+    path: /wrk2-api/home-timeline/read
+    method: GET
+    lua_script: configs/wrk2/read-home-timeline.lua
+    rps: 300
+    threads: 2
+    connections: 50
+    simultaneous: true
+
+  - name: read-user-timeline
+    path: /wrk2-api/user-timeline/read
+    method: GET
+    lua_script: configs/wrk2/read-user-timeline.lua
+    rps: 300
+    threads: 2
+    connections: 50
+    simultaneous: true
+
+timing:
+  warmup: 60s
+  measurement: 180s
+  cooldown: 60s

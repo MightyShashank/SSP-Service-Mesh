@@ -1,0 +1,76 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# SSP Project — root .gitignore
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── Root-level scratch / log files (not part of the codebase) ────────────────
+efficient_transfer_to_master.txt
+logs.txt
+project_doc.tex
+
+# ── Empty experiment placeholder directories ──────────────────────────────────
+# These exist as structural placeholders but contain no committed content yet.
+Section_1_Core_Interference_Categorization/Experiment1/
+Section_1_Core_Interference_Categorization/Experiment2/
+Section_2_Root_Cause_Proof/Experiment5/
+Section_2_Root_Cause_Proof/Experiment6/
+Section_2_Root_Cause_Proof/Experiment7/
+Section_2_Root_Cause_Proof/Experiment8/
+Section_2_Root_Cause_Proof/Experiment9/
+Section_3_Negative_Results/
+Section_4_Real_Workload_Validation/Experiment14/
+Section_4_Real_Workload_Validation/Experiment15/
+
+# ── Python virtual environments ───────────────────────────────────────────────
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+.eggs/
+dist/
+build/
+*.egg
+
+# ── Experiment raw data (large, re-generated) ─────────────────────────────────
+# Parsed CSVs and figures are reproducible from raw data — exclude by default.
+# Raw wrk2 outputs are often too large for git and should live in cloud storage.
+**/data/raw/run_*/
+**/data/processed/csv/
+**/results/figures/
+**/results/tables/
+
+# ── LaTeX build artifacts ─────────────────────────────────────────────────────
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.log
+*.lot
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+*.pdf
+
+# ── OS junk ───────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Editor / IDE ──────────────────────────────────────────────────────────────
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+
+# ── Secrets / credentials (never commit these) ───────────────────────────────
+*.env
+*.key
+*.pem
+kubeconfig

@@ -1,0 +1,4 @@
+NAME                            CPU(cores)   CPU(%)   MEMORY(bytes)   MEMORY(%)   
+default-pool-ssp-11b2c93c3e14   746m         19%      1132Mi          14%         
+default-pool-ssp-157a7771fb89   1812m        47%      2847Mi          36%         
+default-pool-ssp-865907b54154   989m         26%      1031Mi          13%         

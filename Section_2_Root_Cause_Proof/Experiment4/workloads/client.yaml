@@ -1,0 +1,36 @@
+# Client pod for Experiment 4 — Fortio-based traffic generator
+# Same node placement ensures traffic flows through same ztunnel
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: client
+  namespace: mesh-exp
+  labels:
+    app: client
+spec:
+  nodeSelector:
+    exp: mesh
+
+  containers:
+  - name: client
+    image: fortio/fortio:latest
+
+    # Run Fortio server mode (keeps container alive)
+    args: ["server"]
+
+    # Mount writable directory for JSON outputs
+    volumeMounts:
+    - name: data
+      mountPath: /data
+
+    resources:
+      requests:
+        cpu: "200m"
+      limits:
+        cpu: "500m"
+
+  # Writable volume (FIXES /data issue)
+  volumes:
+  - name: data
+    emptyDir: {}

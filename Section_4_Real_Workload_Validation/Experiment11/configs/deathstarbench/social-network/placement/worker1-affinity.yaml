@@ -1,0 +1,95 @@
+# Placement overlay: Pin mid-tier and database DSB services to worker-1.
+#
+# Node: default-pool-ssp-157a7771fb89  (role=worker-1)
+# These services do NOT share ztunnel with the noisy neighbour.
+#
+# The DSB _baseDeployment.tpl template supports:
+#   nodeName: <node-name>   ← direct node binding (bypasses scheduler)
+#
+# Services pinned here (actual DSB subchart names):
+# Mid-tier app services:
+#   - compose-post-service
+#   - post-storage-service
+#   - home-timeline-service
+#   - user-timeline-service
+#   - nginx-thrift          (the nginx frontend — NOT nginx-web-server)
+#   - media-frontend
+#   - jaeger
+# Databases (standalone MongoDB + Redis + Memcached):
+#   - social-graph-mongodb
+#   - social-graph-redis
+#   - post-storage-mongodb
+#   - post-storage-memcached
+#   - home-timeline-redis
+#   - user-timeline-mongodb
+#   - user-timeline-redis
+#   - media-mongodb
+#   - media-memcached
+#   - user-mongodb
+#   - user-memcached
+#   - url-shorten-mongodb
+#   - url-shorten-memcached
+
+# ── Mid-tier app services ──────────────────────────────────────────────────
+compose-post-service:
+  nodeName: default-pool-ssp-157a7771fb89
+
+post-storage-service:
+  nodeName: default-pool-ssp-157a7771fb89
+
+home-timeline-service:
+  nodeName: default-pool-ssp-157a7771fb89
+
+user-timeline-service:
+  nodeName: default-pool-ssp-157a7771fb89
+
+nginx-thrift:
+  nodeName: default-pool-ssp-157a7771fb89
+
+media-frontend:
+  nodeName: default-pool-ssp-157a7771fb89
+
+jaeger:
+  nodeName: default-pool-ssp-157a7771fb89
+
+# ── Databases: MongoDB ─────────────────────────────────────────────────────
+social-graph-mongodb:
+  nodeName: default-pool-ssp-157a7771fb89
+
+post-storage-mongodb:
+  nodeName: default-pool-ssp-157a7771fb89
+
+user-timeline-mongodb:
+  nodeName: default-pool-ssp-157a7771fb89
+
+media-mongodb:
+  nodeName: default-pool-ssp-157a7771fb89
+
+user-mongodb:
+  nodeName: default-pool-ssp-157a7771fb89
+
+url-shorten-mongodb:
+  nodeName: default-pool-ssp-157a7771fb89
+
+# ── Databases: Redis ───────────────────────────────────────────────────────
+social-graph-redis:
+  nodeName: default-pool-ssp-157a7771fb89
+
+home-timeline-redis:
+  nodeName: default-pool-ssp-157a7771fb89
+
+user-timeline-redis:
+  nodeName: default-pool-ssp-157a7771fb89
+
+# ── Databases: Memcached ───────────────────────────────────────────────────
+post-storage-memcached:
+  nodeName: default-pool-ssp-157a7771fb89
+
+media-memcached:
+  nodeName: default-pool-ssp-157a7771fb89
+
+user-memcached:
+  nodeName: default-pool-ssp-157a7771fb89
+
+url-shorten-memcached:
+  nodeName: default-pool-ssp-157a7771fb89

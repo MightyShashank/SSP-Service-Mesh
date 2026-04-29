@@ -1,0 +1,103 @@
+#!/usr/bin/env bpftrace
+/*
+ * latency_decomp.bt — Latency Decomposition via Kernel Probes
+ *
+ * Decomposes per-request latency through the ztunnel proxy into:
+ *   T_network     = t2 - t1  (kernel TCP recv → userspace delivery)
+ *   T_proxy_total = t5 - t2  (total proxy processing time)
+ *
+ * Full decomposition (if ztunnel has debug symbols):
+ *   T_network      = t2 - t1
+ *   T_kernel_queue = t3 - t2
+ *   T_proxy_queue  = t4 - t3
+ *   T_execution    = t5 - t4
+ *
+ * Usage:
+ *   sudo bpftrace latency_decomp.bt -p <ZTUNNEL_PID>
+ *
+ * This script uses the kprobe-only fallback strategy.
+ * For uprobe-enhanced version, ztunnel must have debug symbols.
+ *
+ * Kernel: 6.8.0-1053-gcp | bpftrace: 0.14.0
+ */
+
+/* -----------------------------------------------
+ * t1: Packet arrival at kernel TCP stack
+ * kprobe:tcp_rcv_established fires when TCP receives
+ * data on an established connection.
+ * ----------------------------------------------- */
+kprobe:tcp_rcv_established
+/pid == $1/
+{
+    @t1_recv[tid] = nsecs;
+}
+
+/* -----------------------------------------------
+ * t2: Data delivered to userspace (ztunnel reads)
+ * kretprobe:tcp_recvmsg fires when recvmsg() returns
+ * to userspace, marking data delivery to ztunnel.
+ * ----------------------------------------------- */
+kretprobe:tcp_recvmsg
+/pid == $1 && @t1_recv[tid]/
+{
+    $t1 = @t1_recv[tid];
+    $t2 = nsecs;
+    $T_network = $t2 - $t1;
+
+    @t2_userspace[tid] = $t2;
+    @network_latency = hist($T_network);
+    @network_count = count();
+
+    // Structured output for parsing
+    printf("DECOMP|%d|%lld|t1=%lld|t2=%lld|T_network=%lld\n",
+           tid, nsecs, $t1, $t2, $T_network);
+
+    delete(@t1_recv[tid]);
+}
+
+/* -----------------------------------------------
+ * t5: Response written to socket
+ * kprobe:tcp_sendmsg fires when ztunnel writes the
+ * response back to the client connection.
+ * ----------------------------------------------- */
+kprobe:tcp_sendmsg
+/pid == $1 && @t2_userspace[tid]/
+{
+    $t2 = @t2_userspace[tid];
+    $t5 = nsecs;
+    $T_proxy_total = $t5 - $t2;
+    $T_e2e = $t5 - ($t2 - 1);  // approximate e2e
+
+    @proxy_total_latency = hist($T_proxy_total);
+    @proxy_total_count = count();
+
+    // Structured output for parsing
+    printf("DECOMP|%d|%lld|t2=%lld|t5=%lld|T_proxy_total=%lld\n",
+           tid, nsecs, $t2, $t5, $T_proxy_total);
+
+    delete(@t2_userspace[tid]);
+}
+
+/* -----------------------------------------------
+ * Periodic summary (every 5 seconds)
+ * ----------------------------------------------- */
+interval:s:5
+{
+    printf("\n--- SNAPSHOT @ %lld ---\n", nsecs);
+    printf("Network latency histogram (ns):\n");
+    print(@network_latency);
+    printf("Proxy total latency histogram (ns):\n");
+    print(@proxy_total_latency);
+    printf("Network probes fired: ");
+    print(@network_count);
+    printf("Proxy probes fired: ");
+    print(@proxy_total_count);
+    printf("--- END SNAPSHOT ---\n\n");
+}
+
+/* -----------------------------------------------
+ * No END block — bpftrace 0.14.0 on Ubuntu 22.04 has a known bug
+ * where END probe fails with "Could not resolve symbol: BEGIN_trigger"
+ * The interval:s:5 snapshots above capture periodic summaries.
+ * bpftrace auto-prints remaining map contents on SIGINT (Ctrl+C).
+ * ----------------------------------------------- */

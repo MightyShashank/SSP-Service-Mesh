@@ -1,0 +1,48 @@
+# Experiment 12 — .gitignore
+
+# Raw and processed experiment data (large files)
+data/raw/*/
+data/processed/
+data/metadata/hardware-info.txt
+data/metadata/software-versions.txt
+data/metadata/git-commit.txt
+
+# Generated figures and reports
+results/figures/
+results/tables/
+results/reports/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# macOS
+.DS_Store
+
+# Temporary files
+/tmp/
+*.tmp
+*.log
+
+# Keep directory structure
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!results/figures/.gitkeep
+!results/tables/.gitkeep
+!results/reports/.gitkeep

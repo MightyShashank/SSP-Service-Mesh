@@ -1,0 +1,25 @@
+# Waypoint proxy configuration — NOT USED in Experiment 12.
+#
+# Experiment 12 uses L4-only ambient mode (ztunnel handles mTLS + forwarding).
+# Waypoint proxies provide L7 policy (AuthorizationPolicy, rate limiting, etc.)
+# and are NOT needed for this baseline experiment.
+#
+# Kept here for reference if future experiments (Exp 14/15) require L7 features.
+#
+# To deploy a waypoint for a service account:
+#   istioctl x waypoint apply --namespace dsb-exp --name social-graph-waypoint \
+#     --service-account social-graph
+#
+# apiVersion: gateway.networking.k8s.io/v1beta1
+# kind: Gateway
+# metadata:
+#   name: social-graph-waypoint
+#   namespace: dsb-exp
+#   labels:
+#     istio.io/waypoint-for: service
+# spec:
+#   gatewayClassName: istio-waypoint
+#   listeners:
+#   - name: mesh
+#     port: 15008
+#     protocol: HBONE

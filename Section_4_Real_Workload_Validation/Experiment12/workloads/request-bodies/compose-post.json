@@ -1,0 +1,7 @@
+{
+  "username": "username_42",
+  "user_id": 42,
+  "text": "Test post from username_42 @user_17 @user_89 https://example.com/abc12345",
+  "media_ids": [12345],
+  "media_types": ["png"]
+}

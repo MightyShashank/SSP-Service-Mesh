@@ -1,0 +1,117 @@
+---
+# svc-noisy: synthetic HTTP/1.1 noisy-neighbor service.
+# Pinned to worker-0 so it shares the ztunnel DaemonSet instance
+# with the victim-tier DSB services.
+# No application-level coupling to any DSB service.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: svc-noisy
+  namespace: dsb-exp
+  labels:
+    app: svc-noisy
+    experiment: "13"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: svc-noisy
+  template:
+    metadata:
+      labels:
+        app: svc-noisy
+        experiment: "13"
+    spec:
+      # Pin to worker-0 — must share ztunnel with victim tier
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: role
+                    operator: In
+                    values:
+                      - worker-0
+      containers:
+        - name: svc-noisy
+          image: nginx:1.25-alpine
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "64Mi"
+            limits:
+              cpu: "500m"
+              memory: "128Mi"
+---
+# svc-noisy-backend: the backend that svc-noisy talks to.
+# Also on worker-0 so all noisy traffic stays on same node.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: svc-noisy-backend
+  namespace: dsb-exp
+  labels:
+    app: svc-noisy-backend
+    experiment: "13"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: svc-noisy-backend
+  template:
+    metadata:
+      labels:
+        app: svc-noisy-backend
+        experiment: "13"
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: role
+                    operator: In
+                    values:
+                      - worker-0
+      containers:
+        - name: backend
+          image: nginx:1.25-alpine
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "64Mi"
+            limits:
+              cpu: "500m"
+              memory: "128Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-noisy
+  namespace: dsb-exp
+  labels:
+    app: svc-noisy
+spec:
+  selector:
+    app: svc-noisy
+  ports:
+    - port: 80
+      targetPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-noisy-backend
+  namespace: dsb-exp
+  labels:
+    app: svc-noisy-backend
+spec:
+  selector:
+    app: svc-noisy-backend
+  ports:
+    - port: 80
+      targetPort: 80

@@ -1,0 +1,10 @@
+# Namespace for Experiment 4: Latency Decomposition via eBPF
+# This ensures both services are in mesh and ztunnel is used.
+# Same namespace as Experiment 3 for consistency.
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mesh-exp
+  labels:
+    istio.io/dataplane-mode: ambient

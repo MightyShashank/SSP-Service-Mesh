@@ -1,0 +1,10 @@
+# Namespace for Experiment 12: DeathStarBench Baseline Characterization
+# Enables Istio Ambient Mode for all pods in this namespace.
+# ztunnel handles mTLS and traffic forwarding transparently.
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dsb-exp
+  labels:
+    istio.io/dataplane-mode: ambient

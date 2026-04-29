@@ -1,0 +1,27 @@
+# socfb-Reed98 Facebook ego-network dataset
+# 963 users, 18,812 edges (undirected follower relationships)
+#
+# Source: https://networkrepository.com/socfb-Reed98.php
+# Used by DeathStarBench Social-Network for realistic social graph density.
+#
+# This file is a placeholder. The actual dataset is large (~500 KB) and should
+# be downloaded from the DSB repository or the Network Repository:
+#
+#   wget https://nrvis.com/download/data/socfb/socfb-Reed98.zip
+#   unzip socfb-Reed98.zip
+#
+# Or use the copy bundled with DSB:
+#   cp /opt/dsb/socialNetwork/datasets/socfb-Reed98.txt .
+#
+# Format: each line is an edge "node_a node_b" (space-separated, 1-indexed)
+#
+# Example:
+# 1 2
+# 1 3
+# 1 5
+# 2 4
+# 2 7
+# ...
+#
+# The init_social_graph.py script reads this file and creates
+# user accounts + follow relationships via the DSB HTTP API.

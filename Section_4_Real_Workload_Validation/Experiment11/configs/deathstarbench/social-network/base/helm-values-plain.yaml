@@ -1,0 +1,11 @@
+# Experiment 11 — Plain K8s Helm values
+# These disable any Istio-related annotations or sidecar injection.
+# DSB services are deployed with NO service mesh.
+
+global:
+  # Ensure no Istio sidecar injection is requested
+  podAnnotations:
+    sidecar.istio.io/inject: "false"
+
+# Base replica counts and image settings are inherited from the DSB default values.
+# Only overrides that matter for plain-K8s operation are set here.

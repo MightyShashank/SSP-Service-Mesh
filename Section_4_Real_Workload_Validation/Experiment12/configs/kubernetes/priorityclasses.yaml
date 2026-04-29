@@ -1,0 +1,32 @@
+# Optional: PriorityClasses for victim-tier services.
+# Ensures victim-tier pods are scheduled before best-effort workloads.
+# Not strictly required for Experiment 12 (baseline), but useful for
+# Experiment 13 where noisy neighbor competes for scheduling.
+
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: dsb-victim-high
+value: 1000000
+globalDefault: false
+description: "High priority for DSB victim-tier services on worker-0"
+
+---
+
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: dsb-midtier
+value: 500000
+globalDefault: false
+description: "Medium priority for DSB mid-tier services on worker-1"
+
+---
+
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: dsb-loadgen
+value: 100000
+globalDefault: false
+description: "Lower priority for wrk2 load generators on load-gen node"

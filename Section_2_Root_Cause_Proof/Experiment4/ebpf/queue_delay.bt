@@ -1,0 +1,70 @@
+#!/usr/bin/env bpftrace
+/*
+ * queue_delay.bt — Proxy Queue Delay Tracing
+ *
+ * Approximates proxy queue delay by measuring the time between a ztunnel
+ * worker thread being woken up (sched_wakeup) and actually getting
+ * scheduled on the CPU (sched_switch).
+ *
+ * This captures scheduling delay — when a ztunnel thread has work to do
+ * but is waiting for a CPU slot because other threads (including those
+ * handling noisy neighbor traffic) are occupying the CPU.
+ *
+ * If ztunnel has debug symbols, uprobe-based enqueue/dequeue tracking
+ * is preferred (see implementation.md for the uprobe variant).
+ *
+ * Usage:
+ *   sudo bpftrace queue_delay.bt
+ *
+ * Kernel: 6.8.0-1053-gcp | bpftrace: 0.14.0
+ */
+
+/* -----------------------------------------------
+ * Track when a ztunnel thread is woken up
+ * (it has work to do but may not get CPU immediately)
+ * ----------------------------------------------- */
+tracepoint:sched:sched_wakeup
+/args->comm == "ztunnel"/
+{
+    @wakeup_ts[args->pid] = nsecs;
+}
+
+/* -----------------------------------------------
+ * Track when a ztunnel thread actually gets the CPU
+ * The delta between wakeup and switch-in = scheduling delay
+ * (proxy queue delay approximation)
+ * ----------------------------------------------- */
+tracepoint:sched:sched_switch
+/args->next_comm == "ztunnel" && @wakeup_ts[args->next_pid]/
+{
+    $delay = nsecs - @wakeup_ts[args->next_pid];
+    
+    @proxy_queue_delay = hist($delay);
+    @queue_delay_count = count();
+
+    // Structured output for each scheduling event
+    printf("QUEUE|%d|%lld|delay_ns=%lld\n",
+           args->next_pid, nsecs, $delay);
+
+    delete(@wakeup_ts[args->next_pid]);
+}
+
+/* -----------------------------------------------
+ * Periodic summary (every 5 seconds)
+ * ----------------------------------------------- */
+interval:s:5
+{
+    printf("\n--- QUEUE DELAY SNAPSHOT @ %lld ---\n", nsecs);
+    printf("Scheduling delay histogram (ns) — approximates proxy queue delay:\n");
+    print(@proxy_queue_delay);
+    printf("Events captured: ");
+    print(@queue_delay_count);
+    printf("--- END SNAPSHOT ---\n\n");
+}
+
+/* -----------------------------------------------
+ * No END block — bpftrace 0.14.0 on Ubuntu 22.04 has a known bug
+ * where END probe fails with "Could not resolve symbol: BEGIN_trigger"
+ * The interval:s:5 snapshots above capture periodic summaries.
+ * bpftrace auto-prints remaining map contents on SIGINT (Ctrl+C).
+ * ----------------------------------------------- */

@@ -1,0 +1,24 @@
+# Compose-post only workload schedule.
+# Used for saturation sweep: isolate compose-post endpoint.
+# Sweeps from 50 to 600 RPS to identify the P99 knee.
+
+name: compose-post-only
+description: |
+  Single endpoint schedule for saturation sweep.
+  Only compose-post is driven (no concurrent read traffic).
+  Used to find the P99 latency-throughput knee for the write path.
+
+endpoints:
+  - name: compose-post
+    path: /wrk2-api/post/compose
+    method: POST
+    lua_script: configs/wrk2/compose-post.lua
+    rps: variable     # Set by sweep script
+    threads: 2
+    connections: 50
+    simultaneous: false
+
+timing:
+  warmup: 10s
+  measurement: 60s
+  cooldown: 30s
