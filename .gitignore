@@ -9,16 +9,16 @@ project_doc.tex
 
 # ── Empty experiment placeholder directories ──────────────────────────────────
 # These exist as structural placeholders but contain no committed content yet.
-Section_1_Core_Interference_Categorization/Experiment1/
-Section_1_Core_Interference_Categorization/Experiment2/
-Section_2_Root_Cause_Proof/Experiment5/
-Section_2_Root_Cause_Proof/Experiment6/
-Section_2_Root_Cause_Proof/Experiment7/
-Section_2_Root_Cause_Proof/Experiment8/
-Section_2_Root_Cause_Proof/Experiment9/
-Section_3_Negative_Results/
-Section_4_Real_Workload_Validation/Experiment14/
-Section_4_Real_Workload_Validation/Experiment15/
+# Section_1_Core_Interference_Categorization/Experiment1/
+# Section_1_Core_Interference_Categorization/Experiment2/
+# Section_2_Root_Cause_Proof/Experiment5/
+# Section_2_Root_Cause_Proof/Experiment6/
+# Section_2_Root_Cause_Proof/Experiment7/
+# Section_2_Root_Cause_Proof/Experiment8/
+# Section_2_Root_Cause_Proof/Experiment9/
+# Section_3_Negative_Results/
+# Section_4_Real_Workload_Validation/Experiment14/
+# Section_4_Real_Workload_Validation/Experiment15/
 
 # ── Python virtual environments ───────────────────────────────────────────────
 .venv/
