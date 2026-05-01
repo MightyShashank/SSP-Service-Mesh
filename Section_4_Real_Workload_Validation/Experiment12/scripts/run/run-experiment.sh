@@ -168,11 +168,9 @@ else
 fi
 
 # ==============================
-# WARMUP (60s — discarded)
+# NOTE: Warmup is done ONCE at the start by run_sequential_experiments.sh
+# (not per-rep — cluster stays warm across all reps via 90s cooldowns)
 # ==============================
-log "Running warmup (${WARMUP_DURATION})..."
-bash "$ROOT_DIR/scripts/run/warmup.sh" "$NGINX_IP" "$WARMUP_DURATION"
-tick "Warmup complete"
 
 # ==============================
 # MEASUREMENT RUN (180s × 3 endpoints)

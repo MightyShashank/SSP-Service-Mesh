@@ -1,7 +1,7 @@
 #!/bin/bash
 # Run N sequential experiment repetitions for Experiment 12.
-# Each repetition: cleanup-deploy-setup → run-experiment
-# Ensures fresh DSB deployment + social graph init for each rep.
+# Each repetition: run-experiment → 90s cooldown (no teardown, no init-graph between reps)
+# One warmup at session start fills all caches.
 #
 # Usage: ./run_sequential_experiments.sh <num_repetitions>
 # Example: ./run_sequential_experiments.sh 5
@@ -26,9 +26,15 @@ log()  { echo -e "\n[INFO] $1"; }
 tick() { echo -e "\n\033[1;32m✔ $1\033[0m"; }
 fail() { echo -e "\n[ERROR] $1"; exit 1; }
 
-log "Starting $NUM_RUNS sequential experiment repetitions..."
-log "Each repetition: cleanup-deploy-setup → social graph init → run-experiment"
+log "Starting $NUM_RUNS sequential experiment repetitions (warm pods — no teardown)"
+log "⚠ Pods stay warm between runs. One warmup at start, then 90s cooldowns only."
 echo ""
+
+# ── ONE-TIME WARMUP before all reps ───────────────────────────────────────────
+# Run warmup ONCE to populate Redis/memcached caches and warm JIT.
+# After this, 90s cooldowns between reps keep the cluster warm.
+log "One-time warmup (all 3 endpoints at high rate — 60s)..."
+bash "$ROOT_DIR/scripts/run/warmup.sh" "127.0.0.1" "60s"
 
 # ==============================
 # MAIN LOOP
@@ -38,13 +44,7 @@ for i in $(seq 1 $NUM_RUNS); do
   echo "  REPETITION $i / $NUM_RUNS"
   echo "======================================"
 
-  # Step 1: Fresh environment (cleanup + redeploy + graph init)
-  log "[$i/$NUM_RUNS] Cleaning up and redeploying..."
-  bash "$ROOT_DIR/scripts/cleanup/cleanup-deploy-setup.sh" \
-    || fail "cleanup-deploy-setup failed on rep $i"
-  tick "[$i/$NUM_RUNS] Environment ready"
-
-  # Step 2: Run experiment
+  # Run experiment
   log "[$i/$NUM_RUNS] Running experiment..."
   bash "$ROOT_DIR/scripts/run/run-experiment.sh" \
     || fail "run-experiment failed on rep $i"
@@ -52,8 +52,8 @@ for i in $(seq 1 $NUM_RUNS); do
 
   # Cooldown between repetitions (skip after last)
   if [ "$i" -lt "$NUM_RUNS" ]; then
-    log "Cooldown between repetitions (120s)..."
-    sleep 120
+    log "Cooldown between repetitions (90s)..."
+    sleep 90
   fi
 done
 

@@ -4,6 +4,11 @@
 
 set -euo pipefail
 
+# Allow running as root (sudo) — use appu's kubeconfig if root's is absent
+if [[ ! -f "${KUBECONFIG:-$HOME/.kube/config}" ]] && [[ -f /home/appu/.kube/config ]]; then
+  export KUBECONFIG=/home/appu/.kube/config
+fi
+
 NAMESPACE="dsb-exp11"
 DSB_REPO="${DSB_REPO:-/opt/dsb}"
 LOCAL_PORT="${LOCAL_PORT:-18080}"
@@ -61,13 +66,42 @@ python3 scripts/init_social_graph.py \
 
 tick "Social graph initialized (socfb-Reed98: 963 users, ~18,800 edges)"
 
+# ── Verify: social graph is stored in Redis, not MongoDB ─────────────────────
+# DSB social-graph-service caches follow relationships in Redis.
+# Expected: ~1924 keys = 962 users × 2 (followees list + followers list per user)
+log "Verifying social graph in Redis (social-graph-redis)..."
+REDIS_KEYS=$(kubectl exec -n "$NAMESPACE" deploy/social-graph-redis -- \
+  redis-cli DBSIZE 2>/dev/null | tr -d '[:space:]' || echo "unknown")
+echo "  social-graph-redis key count: $REDIS_KEYS"
+if [[ "$REDIS_KEYS" == "0" ]] || [[ "$REDIS_KEYS" == "unknown" ]]; then
+  warn "Redis key count is '$REDIS_KEYS' — graph may not have loaded. Check pod logs."
+  COUNT="$REDIS_KEYS keys in Redis"
+else
+  tick "Redis verified: $REDIS_KEYS keys in social-graph-redis (expected ~1924)"
+  COUNT="$REDIS_KEYS keys in Redis"
+fi
+
+# ── Smoke test ────────────────────────────────────────────────────────────────
 log "Smoke test: reading user timeline for user 1..."
 RESPONSE=$(curl -s --connect-timeout 5 \
   "http://127.0.0.1:${LOCAL_PORT}/wrk2-api/user-timeline/read?user_id=1&start=0&stop=5" \
   || echo "FAIL")
 
 if echo "$RESPONSE" | grep -q "FAIL\|error\|Error"; then
-  warn "Smoke test response unexpected — graph may not be fully initialized yet"
+  warn "Smoke test unexpected — timeline may not be populated yet (OK for fresh baseline)"
+  echo "  Response: ${RESPONSE:0:200}"
 else
-  tick "Smoke test passed"
+  tick "Smoke test passed — user timeline readable"
 fi
+
+echo ""
+echo "═══════════════════════════════════════════════════"
+echo "  Social graph init COMPLETE ✅"
+echo "  Namespace: $NAMESPACE (plain Kubernetes, NO Istio)"
+echo "  Graph:     socfb-Reed98 (963 users)"
+echo "  MongoDB:   $COUNT edges"
+echo "═══════════════════════════════════════════════════"
+echo ""
+echo "  Next: run the experiment"
+echo "    sudo bash scripts/run/run-experiment.sh"
+echo ""

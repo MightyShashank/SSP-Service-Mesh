@@ -46,3 +46,7 @@ env/
 !results/figures/.gitkeep
 !results/tables/.gitkeep
 !results/reports/.gitkeep
+
+implementation.md
+final_report.md
+issues_till_now.md

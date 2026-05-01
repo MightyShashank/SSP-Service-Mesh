@@ -117,14 +117,22 @@ Assigns `role=worker-0`, `role=worker-1`, `role=load-gen` labels for determinist
 
 ---
 
-### Step 3 — Deploy Everything (One-Shot)
+### Step 3 — Install Istio Ambient
+```bash
+cd scripts/deploy
+bash deploy-istio-ambient.sh
+```
+This script ensures the `ztunnel` DaemonSet and Istio CRDs are installed on the cluster. **You must run this if you previously purged Istio for Experiment 11.**
+
+---
+
+### Step 4 — Deploy Everything (One-Shot)
 ```bash
 cd scripts/deploy
 bash deploy-setup.sh
 ```
 This single script:
 - Creates `dsb-exp` namespace with `istio.io/dataplane-mode: ambient`
-- Installs/verifies Istio Ambient on cluster
 - Deploys DSB Social-Network via Helm with node-affinity placement
 - Deploys Jaeger (all-in-one) on `worker-1`
 - Waits for all pods to be `Running + Ready`
@@ -133,7 +141,7 @@ This single script:
 
 ---
 
-### Step 4 — Verify Deployment
+### Step 5 — Verify Deployment
 ```bash
 cd scripts/deploy
 bash verify-deployment.sh
@@ -148,7 +156,7 @@ Checks:
 
 ---
 
-### Step 5 — Run Saturation Sweep (One-Time)
+### Step 6 — Run Saturation Sweep (One-Time)
 ```bash
 cd scripts/run
 bash run-saturation-sweep.sh
@@ -159,23 +167,34 @@ Sweeps compose-post from 50 → 600 RPS to find the P99 knee. Confirms 200/300/3
 
 ---
 
-### Step 6 — Run 5 Baseline Repetitions (Sequential)
+### Step 7 — Run Baseline Repetitions (Sequential)
+
+> **⚠️ CRITICAL METHODOLOGY UPDATE:** To match the realistic steady-state conditions of Experiment 13, **we NO LONGER tear down or re-initialize between runs**. The cluster stays warm.
+
 ```bash
 cd scripts/run
 chmod +x run_sequential_experiments.sh
 ./run_sequential_experiments.sh 5
 ```
-Each repetition:
-1. Runs `cleanup-deploy-setup.sh` → fresh namespace + DSB + social graph init
-2. Runs `run-experiment.sh` → 60s warmup + 180s measurement across all 3 endpoints in parallel
+The script automatically executes the warm-cluster methodology:
+1. `warmup.sh` (ONCE at start) → 60s at 800 RPS (200+300+300) to fill Redis/memcached and warm JIT.
+2. `run-experiment.sh` → 180s measurement (3 endpoints in parallel).
+3. Cooldown → 90s sleep.
+4. (Repeats steps 2 and 3 for N reps — no teardowns, no graph resets).
 
 Results saved to `data/raw/run_001/` through `run_005/`.
 
-**Or run a single repetition manually:**
+**Or run manually (order is critical):**
 ```bash
-cd scripts/run
-chmod +x run-experiment.sh
-./run-experiment.sh
+# ① If this is the FIRST run, initialize the graph and warm caches
+bash scripts/deploy/init-graph.sh
+bash scripts/run/warmup.sh "127.0.0.1" "60s"
+
+# ② Run the experiment (measure only)
+bash scripts/run/run-experiment.sh
+
+# ③ Wait 90s before next manual run (do NOT re-init graph)
+sleep 90
 ```
 
 ---

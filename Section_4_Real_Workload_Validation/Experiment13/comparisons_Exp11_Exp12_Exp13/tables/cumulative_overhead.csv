@@ -1,0 +1,10 @@
+endpoint,metric,plain_ms,ambient_ms,noisy_ms,mesh_tax_pct,noisy_tax_pct,total_tax_pct
+compose-post,p50,279.06,305.0,334.58,9.3,10.6,19.9
+compose-post,p99,794.86,893.7,3560.0,12.4,335.4,347.9
+compose-post,p99_99,978.23,1150.0,3940.0,17.6,285.2,302.8
+home-timeline,p50,170.56,184.6,197.52,8.2,7.6,15.8
+home-timeline,p99,658.54,754.7,4280.0,14.6,535.3,549.9
+home-timeline,p99_99,864.79,1000.0,4760.0,15.6,434.8,450.4
+user-timeline,p50,138.02,151.4,167.45,9.7,11.6,21.3
+user-timeline,p99,562.65,637.7,1270.0,13.3,112.4,125.7
+user-timeline,p99_99,743.38,904.2,1900.0,21.6,134.0,155.6

@@ -36,6 +36,27 @@ tick() { echo -e "\n\033[1;32m✔ $1\033[0m"; }
 log "Starting sustained-ramp sweep: case=${VICTIM_CASE}, steps $RAMP_START_RPS→$RAMP_END_RPS RPS (step $RAMP_STEP_RPS)"
 log "Repetitions per load level: $REPS"
 
+# ── ONE-TIME WARMUP before all trials ─────────────────────────────────────────
+# Fires all 3 DSB endpoints at high rate for 60s to fill Redis/memcached caches
+# and warm JIT. After this the cluster stays warm through the entire sweep.
+WRK2="${WRK2:-$(command -v wrk2)}"
+source "$ROOT_DIR/configs/wrk2/rates.env" 2>/dev/null || true
+COMPOSE_RPS="${COMPOSE_RPS:-50}"
+HOME_RPS="${HOME_RPS:-100}"
+USER_RPS="${USER_RPS:-100}"
+log "One-time warmup (all 3 endpoints — 60s, output discarded)..."
+"$WRK2" -t 2 -c 50 -d 60s -s "$ROOT_DIR/configs/wrk2/compose-post.lua" \
+  "http://127.0.0.1:18080/wrk2-api/post/compose" -R 200 > /dev/null 2>&1 &
+PID1=$!
+"$WRK2" -t 2 -c 50 -d 60s -s "$ROOT_DIR/configs/wrk2/read-home-timeline.lua" \
+  "http://127.0.0.1:18080/wrk2-api/home-timeline/read" -R 300 > /dev/null 2>&1 &
+PID2=$!
+"$WRK2" -t 2 -c 50 -d 60s -s "$ROOT_DIR/configs/wrk2/read-user-timeline.lua" \
+  "http://127.0.0.1:18080/wrk2-api/user-timeline/read" -R 300 > /dev/null 2>&1 &
+PID3=$!
+wait $PID1 $PID2 $PID3 || true
+tick "Warmup complete — cluster is hot, starting trials"
+
 NOISY_RPS=$RAMP_START_RPS
 while [[ $NOISY_RPS -le $RAMP_END_RPS ]]; do
   log "── Noisy RPS = ${NOISY_RPS} ──"

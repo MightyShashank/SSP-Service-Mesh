@@ -451,6 +451,63 @@ comparisons_Exp12_Exp13/
 
 ---
 
+### Step 13 — Three-Way Comparison (Exp11 vs Exp12 vs Exp13)
+
+Compares all three experiments side-by-side: **plain K8s** (Exp11) → **Ambient mesh** (Exp12) → **noisy neighbor** (Exp13). Isolates the mesh tax from the noisy-neighbor tax.
+
+**Prerequisites:** Experiment 11 `summary.csv` should exist for full figures; without it, placeholder PNGs are generated.
+
+```bash
+# Option A — one-shot shell script
+bash comparisons_Exp11_Exp12_Exp13/run_comparison_three.sh        # default 700 RPS
+bash comparisons_Exp11_Exp12_Exp13/run_comparison_three.sh 500    # different noisy RPS
+
+# Option B — Python directly
+source .venv/bin/activate
+python3 comparisons_Exp11_Exp12_Exp13/compare_three.py \
+  --exp11     ../Experiment11/results/tables/summary.csv \
+  --exp12     ../Experiment12/results/tables/summary.csv \
+  --amp13     results/tables/amplification.csv \
+  --output    comparisons_Exp11_Exp12_Exp13/ \
+  --noisy-rps 700
+```
+
+**Output tables:**
+
+| Table | File | Description |
+|-------|------|-------------|
+| Three-way latency | `tables/three_way_latency.csv` | Exp11 vs Exp12 vs Exp13 latencies + mesh/noisy overhead % |
+| Mesh tax | `tables/mesh_tax.csv` | Exp11 → Exp12 delta (pure Istio Ambient cost) |
+| Cumulative overhead | `tables/cumulative_overhead.csv` | Stacked: mesh tax % + noisy tax % + total tax % |
+
+**Output figures:**
+
+| Figure | File | What it shows |
+|--------|------|---------------|
+| Three-way bars | `figures/three_way_percentile_bars.{pdf,png}` | Grouped P50/P99/P99.99 bars — green/blue/red for Exp11/12/13 |
+| Overhead waterfall | `figures/overhead_waterfall.{pdf,png}` | Stacked bars decomposing latency into plain + mesh overhead + noisy overhead |
+| Mesh tax | `figures/mesh_tax_bars.{pdf,png}` | % overhead of Ambient mesh vs plain K8s (Exp12 − Exp11) |
+| Three-exp amplification | `figures/three_exp_amplification.{pdf,png}` | P99.99 amplification vs noisy RPS — all relative to Exp11 baseline |
+| Radar chart | `figures/three_exp_radar.{pdf,png}` | Polar plot: all 3 experiments × all endpoints × P50/P99/P99.99 |
+
+```
+comparisons_Exp11_Exp12_Exp13/
+├── compare_three.py                                  ← main script
+├── run_comparison_three.sh                           ← one-shot runner
+├── tables/
+│   ├── three_way_latency.csv
+│   ├── mesh_tax.csv
+│   └── cumulative_overhead.csv
+└── figures/
+    ├── three_way_percentile_bars.{pdf,png}
+    ├── overhead_waterfall.{pdf,png}
+    ├── mesh_tax_bars.{pdf,png}
+    ├── three_exp_amplification.{pdf,png}
+    └── three_exp_radar.{pdf,png}
+```
+
+---
+
 ## Full Workflow via Make (recommended)
 
 ```bash
@@ -468,9 +525,13 @@ make run-churn CASE=A         # Step 7b: churn mode
 make analyze        # Steps 8–10: parse + traces + amplification
 make figures        # Step 11: all 5 figures
 
-# Step 12: cross-experiment comparison vs Experiment 12
-bash comparisons_Exp12_Exp13/run_comparison.sh        # default 700 RPS noisy for bar charts
-bash comparisons_Exp12_Exp13/run_comparison.sh 500    # use a different noisy RPS
+# Step 12: two-way comparison (Exp12 vs Exp13)
+bash comparisons_Exp12_Exp13/run_comparison.sh        # default 700 RPS
+bash comparisons_Exp12_Exp13/run_comparison.sh 500    # different noisy RPS
+
+# Step 13: three-way comparison (Exp11 vs Exp12 vs Exp13)
+bash comparisons_Exp11_Exp12_Exp13/run_comparison_three.sh        # default 700 RPS
+bash comparisons_Exp11_Exp12_Exp13/run_comparison_three.sh 500    # different noisy RPS
 ```
 
 ---

@@ -1,32 +1,65 @@
 #!/bin/bash
 # Experiment 11 — Sequential run driver.
-# Runs N full repetitions with cleanup+redeploy between each.
-# Usage: ./run_sequential_experiments.sh [N]   (default N=5)
+# Runs N sequential experiment repetitions on a warm cluster.
+# Each repetition: run-experiment → 90s cooldown (no teardown, no init-graph between reps)
+# One warmup at session start fills all caches.
+# Usage: ./run_sequential_experiments.sh <num_repetitions>
+# Example: ./run_sequential_experiments.sh 5
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
-N="${1:-5}"
-log() { echo -e "\n[SEQ] $1"; }
+if [ "$#" -ne 1 ]; then
+  echo "Usage: $0 <num_repetitions>"
+  echo "Example: $0 5"
+  exit 1
+fi
 
-log "Starting $N sequential repetitions (Experiment 11 — plain K8s)"
+NUM_RUNS=$1
 
-for i in $(seq 1 "$N"); do
-  log "=== Repetition $i / $N ==="
+# ==============================
+# HELPERS
+# ==============================
+log()  { echo -e "\n[INFO] $1"; }
+tick() { echo -e "\n\033[1;32m✔ $1\033[0m"; }
+fail() { echo -e "\n[ERROR] $1"; exit 1; }
 
-  # Fresh deploy between runs to control DB state
-  log "Cleanup + redeploy (fresh DB init)..."
-  DSB_REPO="${DSB_REPO:-/opt/dsb}" bash "$ROOT_DIR/scripts/cleanup/cleanup-deploy-setup.sh"
+log "Starting $NUM_RUNS sequential experiment repetitions (warm pods — no teardown)"
+log "⚠ Pods stay warm between runs. One warmup at start, then 90s cooldowns only."
+echo ""
 
-  log "Running experiment..."
-  bash "$ROOT_DIR/scripts/run/run-experiment.sh"
+log "Running global warmup (60s) before first repetition..."
+bash "$ROOT_DIR/scripts/run/warmup.sh" "127.0.0.1" "60s"
+tick "Global warmup complete"
 
-  if [[ "$i" -lt "$N" ]]; then
-    log "Cooldown (90s before next repetition)..."
+# After this, 90s cooldowns between reps keep the cluster warm.
+
+# ==============================
+# MAIN LOOP
+# ==============================
+for i in $(seq 1 $NUM_RUNS); do
+  echo "======================================"
+  echo "  REPETITION $i / $NUM_RUNS"
+  echo "======================================"
+
+  # Run experiment
+  log "[$i/$NUM_RUNS] Running experiment..."
+  bash "$ROOT_DIR/scripts/run/run-experiment.sh" \
+    || fail "run-experiment failed on rep $i"
+  tick "[$i/$NUM_RUNS] Experiment completed"
+
+  # Cooldown between repetitions (skip after last)
+  if [ "$i" -lt "$NUM_RUNS" ]; then
+    log "Cooldown between repetitions (90s)..."
     sleep 90
   fi
 done
 
-log "All $N repetitions complete. Results in data/raw/"
+# ==============================
+# DONE
+# ==============================
+log "ALL $NUM_RUNS REPETITIONS COMPLETE ✅"
+echo ""
+echo "Results in: $ROOT_DIR/data/raw/"

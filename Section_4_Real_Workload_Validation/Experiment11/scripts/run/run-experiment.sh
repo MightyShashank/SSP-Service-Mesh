@@ -10,6 +10,11 @@
 
 set -euo pipefail
 
+# Allow running as root (sudo) — use appu's kubeconfig if root's is absent
+if [[ ! -f "${KUBECONFIG:-$HOME/.kube/config}" ]] && [[ -f /home/appu/.kube/config ]]; then
+  export KUBECONFIG=/home/appu/.kube/config
+fi
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
@@ -137,15 +142,9 @@ fi
 log "Background metrics: no ztunnel poller (plain K8s). Node/pod CPU collected at end."
 
 # ==============================
-# WARMUP (60s — discarded)
+# NOTE: Warmup is done ONCE at the start by run_sequential_experiments.sh
+# (not per-rep — cluster stays warm across all reps via 90s cooldowns)
 # ==============================
-log "Running warmup (${WARMUP_DURATION})..."
-"$WRK2" -t "$WRK2_THREADS" -c "$WRK2_CONNS" -d "$WARMUP_DURATION" \
-  -s "$ROOT_DIR/configs/wrk2/compose-post.lua" \
-  "http://127.0.0.1:18080/wrk2-api/post/compose" -R "$COMPOSE_RPS" \
-  > /dev/null 2>&1 &
-wait $!
-tick "Warmup complete"
 
 # ==============================
 # MEASUREMENT RUN (180s × 3 endpoints in parallel)
@@ -153,19 +152,19 @@ tick "Warmup complete"
 RUN_START=$(timestamp)
 log "Starting measurement run (${MEASURE_DURATION}) — 3 endpoints in parallel..."
 
-"$WRK2" -t "$WRK2_THREADS" -c "$WRK2_CONNS" -d "$MEASURE_DURATION" -L \
+"$WRK2" -t "$WRK2_THREADS" -c "$WRK2_CONNS" -d "$MEASURE_DURATION" -L -T 10s \
   -s "$ROOT_DIR/configs/wrk2/compose-post.lua" \
   "http://127.0.0.1:18080/wrk2-api/post/compose" -R "$COMPOSE_RPS" \
   > "$PHASE_DIR/compose-post.txt" 2>&1 &
 PID_COMPOSE=$!
 
-"$WRK2" -t "$WRK2_THREADS" -c "$WRK2_CONNS" -d "$MEASURE_DURATION" -L \
+"$WRK2" -t "$WRK2_THREADS" -c "$WRK2_CONNS" -d "$MEASURE_DURATION" -L -T 10s \
   -s "$ROOT_DIR/configs/wrk2/read-home-timeline.lua" \
   "http://127.0.0.1:18080/wrk2-api/home-timeline/read" -R "$HOME_RPS" \
   > "$PHASE_DIR/home-timeline.txt" 2>&1 &
 PID_HOME=$!
 
-"$WRK2" -t "$WRK2_THREADS" -c "$WRK2_CONNS" -d "$MEASURE_DURATION" -L \
+"$WRK2" -t "$WRK2_THREADS" -c "$WRK2_CONNS" -d "$MEASURE_DURATION" -L -T 10s \
   -s "$ROOT_DIR/configs/wrk2/read-user-timeline.lua" \
   "http://127.0.0.1:18080/wrk2-api/user-timeline/read" -R "$USER_RPS" \
   > "$PHASE_DIR/user-timeline.txt" 2>&1 &

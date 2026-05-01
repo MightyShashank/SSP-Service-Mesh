@@ -3,9 +3,53 @@
 # DSB services are deployed with NO service mesh.
 
 global:
+  replicas: 1
+  imagePullPolicy: "IfNotPresent"
+  restartPolicy: Always
+  serviceType: ClusterIP
+  dockerRegistry: docker.io
+  defaultImageVersion: latest
+
   # Ensure no Istio sidecar injection is requested
   podAnnotations:
     sidecar.istio.io/inject: "false"
 
-# Base replica counts and image settings are inherited from the DSB default values.
-# Only overrides that matter for plain-K8s operation are set here.
+  redis:
+    standalone:
+      enabled: true
+    cluster:
+      enabled: false
+    replication:
+      enabled: false
+  memcached:
+    standalone:
+      enabled: true
+    cluster:
+      enabled: false
+  mongodb:
+    standalone:
+      enabled: true
+    sharding:
+      enabled: false
+
+  # ── Global resource limits — MUST match Exp12 for fair comparison ──────────
+  # Sized for 12+ services on 4-vCPU / 8 GB nodes.
+  # WITHOUT this, DSB defaults to 128Mi per pod → user-mongodb OOMKilled
+  # during load (restarts corrupt all in-flight requests → timeout storm).
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "64Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+
+  # ── Jaeger tracing — 100% sampling ────────────────────────────────────────
+  jaeger:
+    localAgentHostPort: "jaeger:6831"
+    samplerType: const
+    samplerParam: 1
+    queueSize: 1000000
+    bufferFlushInterval: 10
+    disabled: false
+    logSpans: false

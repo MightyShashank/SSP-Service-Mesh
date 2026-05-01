@@ -110,13 +110,8 @@ ZTUNNEL_POD=$(kubectl get pods -n istio-system -o wide \
 tick "ztunnel pod → $ZTUNNEL_POD"
 
 # ─── Warmup ───────────────────────────────────────────────────────────────────
-log "Warmup (${WARMUP_DURATION}) — DSB only, no noisy load..."
-"$WRK2" -t "$WRK2_THREADS" -c "$WRK2_CONNS" -d "$WARMUP_DURATION" \
-  -s "$ROOT_DIR/configs/wrk2/compose-post.lua" \
-  "http://127.0.0.1:18080/wrk2-api/post/compose" -R "$COMPOSE_RPS" \
-  > /dev/null 2>&1 &
-wait $!
-tick "Warmup complete"
+# NOTE: Warmup is done ONCE at start of run-sustained-ramp.sh (not per trial).
+# Cluster stays warm via 60-120s cooldowns between trials.
 
 # ─── Start ztunnel CPU poller ─────────────────────────────────────────────────
 log "Starting ztunnel metrics poller (CPU + memory + threads)..."

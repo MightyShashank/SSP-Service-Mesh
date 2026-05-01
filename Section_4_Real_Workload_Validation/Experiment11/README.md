@@ -49,6 +49,15 @@ The delta between Experiment 11 and Experiment 12 is the **cost of the mesh itse
 | ztunnel DaemonSet | ✅ on all nodes | ❌ absent |
 | mTLS between pods | ✅ enforced by ztunnel | ❌ plain HTTP |
 | Namespace label `istio.io/dataplane-mode=ambient` | ✅ set | ❌ **must NOT be set** |
+
+> [!WARNING]
+> **CRITICAL: You CANNOT run Experiment 11 while Istio is installed on the cluster.**
+> Even if `dsb-exp11` is not enrolled in the mesh, the `istio-cni-node` DaemonSet will still intercept pod networking, causing unauthorized sandbox errors or adding asymmetric CNI overhead that ruins the baseline.
+> 
+> Before deploying Experiment 11, you **must completely purge Istio** from the nodes:
+> ```bash
+> bash scripts/cleanup/uninstall-istio-completely.sh
+> ```
 | ztunnel CPU metrics | ✅ collected | ❌ N/A — replaced by plain pod CPU |
 
 ---
@@ -197,6 +206,43 @@ make deploy
 
 ---
 
+### Step 3.5 — Initialize Social Graph ⚠️ MANDATORY
+
+> **This step is required before every experiment run.** Without it, every request hangs for 40+ seconds (social-graph MongoDB has 0 edges), producing completely invalid latency data (P50 ~45s, ~20 RPS actual vs 50 target, thousands of timeouts).
+
+```bash
+bash scripts/deploy/init-graph.sh
+```
+
+What it does:
+- Port-forwards `nginx-thrift` to `localhost:18080`
+- Runs DSB's `init_social_graph.py` with `socfb-Reed98` (963 users, ~18,800 edges)
+- Verifies MongoDB edge count (`db.social_graph.count()` must be > 0)
+- Smoke-tests the user-timeline endpoint
+
+**Expected output:**
+```
+✔ Social graph initialized (socfb-Reed98: 963 users, ~18,800 edges)
+  social_graph collection count: 18836
+✔ MongoDB verified: 18836 edges in social_graph
+✔ Smoke test passed — user timeline readable
+═══════════════════════════════════════════════════
+  Social graph init COMPLETE ✅
+  Namespace: dsb-exp11 (plain Kubernetes, NO Istio)
+  Graph:     socfb-Reed98 (963 users)
+  MongoDB:   18836 edges
+═══════════════════════════════════════════════════
+  Next: run the experiment
+    sudo bash scripts/run/run-experiment.sh
+```
+
+> **Signs of failure:** If MongoDB count is 0, do NOT proceed. Check pod logs:
+> ```bash
+> kubectl logs -n dsb-exp11 -l service=social-graph-service --tail=30
+> ```
+
+---
+
 ### Step 4 — Verify Deployment
 
 ```bash
@@ -239,29 +285,50 @@ make sweep
 
 ---
 
-### Step 6 — Run 5 Baseline Repetitions (Sequential)
+### Step 6 — Run Baseline Repetitions
 
+> **⚠️ CRITICAL METHODOLOGY UPDATE:** To match the realistic steady-state conditions of Experiment 13, **we NO LONGER tear down or re-initialize between runs**. The cluster stays warm.
+
+**Recommended — sequential script:**
 ```bash
 chmod +x scripts/run/run_sequential_experiments.sh
-bash scripts/run/run_sequential_experiments.sh 5
+sudo bash scripts/run/run_sequential_experiments.sh 5
 ```
 
-Each repetition:
-1. Runs `cleanup-deploy-setup.sh` → fresh namespace + DSB + social graph init
-2. Runs `run-experiment.sh` → 60s warmup + 180s measurement across all 3 endpoints in parallel
+The script automatically executes the warm-cluster methodology:
+1. `warmup.sh` (ONCE at start) → 60s at 800 RPS (200+300+300) to fill Redis/memcached and warm JIT.
+2. `run-experiment.sh` → 180s measurement (3 endpoints in parallel).
+3. Cooldown → 90s sleep.
+4. (Repeats steps 2 and 3 for N reps — no teardowns, no graph resets).
 
 Results saved to `data/raw/run_001/` through `run_005/`.
 
-**Or run a single repetition manually:**
+**Or run manually (order is critical):**
 ```bash
-chmod +x scripts/run/run-experiment.sh
-./scripts/run/run-experiment.sh
+# ① If this is the FIRST run, initialize the graph and warm caches
+bash scripts/deploy/init-graph.sh
+bash scripts/run/warmup.sh "127.0.0.1" "60s"
+
+# ② Run the experiment (measure only)
+sudo bash scripts/run/run-experiment.sh
+
+# ③ Wait 90s before next manual run (do NOT re-init graph)
+sleep 90
 ```
+
+**Sanity check — healthy run_001 output:**
+```
+compose-post:   Requests/sec: ~50    P50 ~200–400ms   timeout 0
+home-timeline:  Requests/sec: ~100   P50 ~150–300ms   timeout 0
+user-timeline:  Requests/sec: ~100   P50 ~150–300ms   timeout 0
+```
+If you see `Requests/sec ~20` or `timeout 5000+` → graph was not initialized. Delete the bad run (`rm -rf data/raw/run_NNN/`) and redo from ①.
 
 Or via Make:
 ```bash
 make run-seq N=5
 ```
+
 
 **Output per run** (`data/raw/run_NNN/`):
 ```
@@ -388,9 +455,16 @@ cd /home/appu/projects/SSP\ Project/Section_4_Real_Workload_Validation/Experimen
 
 make setup          # Step 0: create .venv + install deps
 make check          # Step 1: pre-flight checks (no Istio required)
-make deploy         # Step 3: deploy plain K8s DSB + Jaeger + graph
+make deploy         # Step 3: deploy plain K8s DSB + Jaeger
+
+bash scripts/deploy/init-graph.sh   # Step 3.5: ⚠️ MANDATORY — init social graph (run after deploy)
+# → check output: "MongoDB: NNNNN edges" must be > 0 before proceeding
+
 make verify         # Step 4: verify deployment (checks NO Istio label)
 make sweep          # Step 5: saturation sweep
+
+bash scripts/deploy/init-graph.sh   # ⚠️ Re-init before run set (always!)
+
 make run-seq N=5    # Step 6: 5 sequential baseline repetitions
 make analyze        # Step 7: parse + stats
 make figures        # Step 8: all 4 paper figures
@@ -496,7 +570,7 @@ Experiment11/
 │   │   └── namespace.yaml            ← dsb-exp11 namespace (NO Istio label)
 │   └── deathstarbench/social-network/
 │       ├── base/
-│       │   └── helm-values-plain.yaml ← sidecar.istio.io/inject: "false"
+│       │   └── helm-values-plain.yaml ← no-mesh + 512Mi memory limits (fixes OOMKill)
 │       └── placement/
 │           ├── worker0-affinity.yaml  ← victim-tier → worker-0
 │           └── worker1-affinity.yaml  ← mid-tier → worker-1
@@ -542,6 +616,114 @@ Experiment11/
         ├── saturation_plots.py       ← Saturation sweep
         └── cdf_plots.py              ← CCDF log-scale
 ```
+
+---
+
+## Debugging Notes & Known Issues
+
+This section documents bugs found and fixed during initial test runs. **Read this before troubleshooting bad data.**
+
+### Bug 1 — OOMKill on `user-mongodb` (128Mi → 512Mi)
+
+**Symptom:** ~20 RPS achieved (vs 50/100/100 target), hundreds of timeouts, P50 ~45–80s.
+
+**Diagnosis:**
+```bash
+kubectl describe pod -n dsb-exp11 -l service=user-mongodb | grep -A5 "Last State"
+# Shows: Reason: OOMKilled, Exit Code: 137
+```
+
+**Root cause:** `helm-values-plain.yaml` had no resource limits → DSB chart default = **128Mi** per pod → `user-mongodb` is killed mid-run when memory spikes under 50 RPS load → all in-flight requests timeout.
+
+**Fix:** Added global resource limits to `configs/deathstarbench/social-network/base/helm-values-plain.yaml` matching Exp12:
+```yaml
+global:
+  resources:
+    limits:
+      cpu: "500m"
+      memory: "512Mi"   # was 128Mi (DSB default) → OOMKilled under load
+```
+Then re-deploy: `bash scripts/deploy/deploy-setup.sh`
+
+---
+
+### Bug 2 — Social Graph `db.social_graph.count() = 0` (false alarm)
+
+**Symptom:** After running `init-graph.sh`, verification showed `0` in MongoDB.
+
+**Root cause:** DSB's `social-graph-service` stores follow relationships **in Redis, not MongoDB**. The mongo count query was always wrong.
+
+**Correct verification:**
+```bash
+# ✅ Correct: check Redis
+kubectl exec -n dsb-exp11 deploy/social-graph-redis -- redis-cli DBSIZE
+# Expected: ~1924 keys = 962 users × 2 (followees + followers list per user)
+
+# ✅ Correct: smoke test via nginx
+kubectl port-forward svc/nginx-thrift 18080:8080 -n dsb-exp11 &
+curl -s "http://127.0.0.1:18080/wrk2-api/user-timeline/read?user_id=1&start=0&stop=3"
+# Expected: JSON with post data — if empty array, graph not loaded
+
+# ❌ Wrong (always 0 even when graph is loaded):
+kubectl exec -n dsb-exp11 deploy/social-graph-mongodb -- \
+  mongo --quiet --eval "db.social_graph.count()" social_graph
+```
+
+---
+
+### Bug 3 — `kubectl` hanging when run as root / via `sudo`
+
+**Symptom:** `kubectl` commands time out when run inside `sudo bash scripts/...` because root has no kubeconfig at `/root/.kube/config`.
+
+**Fix:** Both `init-graph.sh` and `run-experiment.sh` now auto-detect and use appu's kubeconfig:
+```bash
+if [[ ! -f "${KUBECONFIG:-$HOME/.kube/config}" ]] && [[ -f /home/appu/.kube/config ]]; then
+  export KUBECONFIG=/home/appu/.kube/config
+fi
+```
+
+**Or run kubectl directly as appu:**
+```bash
+sudo -u appu kubectl get pods -n dsb-exp11
+```
+
+---
+
+### Bug 4 — Missing `-T 10s` timeout in wrk2 calls
+
+**Symptom:** 5,000+ socket timeouts per run even at idle load. P50 = 45s.
+
+**Root cause:** `run-experiment.sh` was missing `-T 10s` flag → default 2s socket timeout triggers because `kubectl port-forward` adds ~3–5s latency on the first packet.
+
+**Fix:** All `wrk2` invocations in `scripts/run/run-experiment.sh` now include `-T 10s`.
+
+---
+
+### Healthy Run Checklist
+
+After a good run, verify:
+```bash
+# 1. RPS should match targets
+grep "Requests/sec" data/raw/run_001/compose-post.txt      # expect ~49-50
+grep "Requests/sec" data/raw/run_001/home-timeline.txt     # expect ~99-100
+grep "Requests/sec" data/raw/run_001/user-timeline.txt     # expect ~99-100
+
+# 2. Zero timeouts
+grep "timeout" data/raw/run_001/compose-post.txt           # expect timeout 0
+
+# 3. MongoDB never restarted
+kubectl get pods -n dsb-exp11 | grep mongodb               # RESTARTS should all be 0
+
+# 4. Reasonable P50 (300–800ms is normal for plain K8s at this load)
+grep "50.000%" data/raw/run_001/compose-post.txt
+```
+
+**Observed first clean run (run_001, 20260429_170904):**
+| Endpoint | RPS | Mean | Max | Timeouts |
+|----------|-----|------|-----|----------|
+| compose-post | 49.73 | 521ms | 2.3s | 0 |
+| home-timeline | 99.76 | 629ms | 3.7s | 0 |
+| user-timeline | 99.67 | 535ms | 4.3s | 0 |
 
 ---
 
